@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="civixApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CIVIX — The City That Listens</title>
+
+    <meta name="theme-color" content="#080D12">
+
+    <meta name="description"
+        content="CIVIX is a digital civic intelligence platform transforming public complaints into structured, trackable civic action.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <!-- Canvas Confetti for Sprinklers / Success Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* =========================================
+   CIVIX MIDNIGHT DESIGN SYSTEM
+========================================= */
+
+        :root {
+            --black: #080D12;
+            --midnight: #101827;
+            --midnight-soft: #151F2D;
+
+            --lime: #C7F36B;
+            --lime-dark: #A9D94E;
+
+            --ivory: #F4F5EF;
+            --white: #FFFFFF;
+
+            --muted: #929BA8;
+            --border: rgba(255, 255, 255, .12);
+
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+
+        body {
+            margin: 0;
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: var(--font-display);
+        }
+
+        ::selection {
+            background: var(--lime);
+            color: var(--black);
+        }
+
+        a,
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* =========================================
+   GLOBAL UTILITIES
+========================================= */
+
+        .font-display {
+            font-family: var(--font-display);
+        }
+
+        .text-lime {
+            color: var(--lime);
+        }
+
+        .bg-midnight {
+            background: var(--black);
+        }
+
+        .section-padding {
+            padding: 140px 7%;
+        }
+
+        .noise {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .035;
+            z-index: 1;
+
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .25em;
+        }
+
+        .lime-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+
+            padding: 17px 27px;
+            border-radius: 100px;
+
+            background: var(--lime);
+            color: var(--black);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition: background .35s, color .35s;
+        }
+
+        .lime-button:hover {
+            background: white;
+        }
+
+        .lime-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* =========================================
+   NAVIGATION
+========================================= */
+
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            backdrop-filter: blur(100%);
+            padding: 22px 7%;
+
+            transition: background .35s, padding .35s;
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, .7);
+        }
+
+        .nav-links a {
+            transition: color .3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--lime);
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 25px;
+            color: white;
+        }
+
+        .mobile-nav {
+            display: none;
+        }
+
+        /* =========================================
+   HERO
+========================================= */
+
+        .hero {
+            position: relative;
+            min-height: 100svh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+
+            background: var(--black);
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+
+            background-image:
+                linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+
+            background-size: 75px 75px;
+
+            mask-image: linear-gradient(to bottom, black, transparent 90%);
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            right: -15%;
+            top: -20%;
+
+            background: radial-gradient(circle,
+                    rgba(199, 243, 107, .13),
+                    transparent 68%);
+
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            padding: 160px 7% 80px;
+        }
+
+        .hero-title {
+            font-size: clamp(65px, 12.5vw, 190px);
+            line-height: .83;
+            letter-spacing: -.095em;
+            font-weight: 600;
+        }
+
+        .hero-title .lime {
+            color: var(--lime);
+        }
+
+        .hero-line {
+            overflow: hidden;
+        }
+
+        .hero-line span {
+            display: block;
+        }
+
+        .hero-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 30px;
+            margin-top: 65px;
+        }
+
+        .hero-description {
+            max-width: 470px;
+            color: #9BA3AE;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .hero-index {
+            position: absolute;
+            bottom: 35px;
+            left: 7%;
+            right: 7%;
+
+            display: flex;
+            justify-content: space-between;
+
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+
+            color: #747E8B;
+            font-size: 10px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+        }
+
+        /* =========================================
+   ABOUT
+========================================= */
+
+        .about {
+            background: var(--ivory);
+            color: var(--black);
+        }
+
+        .about-heading {
+            font-size: clamp(48px, 8vw, 115px);
+            letter-spacing: -.085em;
+            line-height: .98;
+        }
+
+        .about-highlight {
+            color: #8A9D60;
+        }
+
+        .about-copy {
+            color: #656B69;
+            font-size: 16px;
+            line-height: 1.85;
+        }
+
+        .feature-card {
+            background: #FFFFFF;
+            border: 1px solid transparent;
+            border-radius: 18px;
+            padding: 38px;
+            min-height: 300px;
+
+            transition:
+                transform .5s,
+                border .5s,
+                box-shadow .5s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-9px);
+            border-color: rgba(169, 217, 78, .65);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .06);
+        }
+
+        .feature-icon {
+            font-size: 34px;
+            color: #839B50;
+        }
+
+        /* =========================================
+   INTELLIGENCE SECTION
+========================================= */
+
+        .intelligence {
+            background: var(--midnight);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intelligence-title {
+            font-size: clamp(55px, 9vw, 125px);
+            line-height: .92;
+            letter-spacing: -.08em;
+        }
+
+        .outline-text {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, .55);
+        }
+
+        .map-panel {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 25px;
+            overflow: hidden;
+
+            background-color: #111C2B;
+
+            background-image:
+                linear-gradient(30deg, transparent 49%, rgba(255, 255, 255, .1) 50%, transparent 51%),
+                linear-gradient(120deg, transparent 49%, rgba(255, 255, 255, .08) 50%, transparent 51%);
+
+            background-size: 80px 80px;
+        }
+
+        .map-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--lime);
+
+            box-shadow: 0 0 0 7px rgba(199, 243, 107, .1);
+
+            animation: mapPulse 2s infinite;
+        }
+
+        @keyframes mapPulse {
+            50% {
+                box-shadow: 0 0 0 18px rgba(199, 243, 107, 0);
+            }
+        }
+
+        /* =========================================
+   PROCESS
+========================================= */
+
+        .process {
+            background: var(--lime);
+            color: var(--black);
+        }
+
+        .process-title {
+            font-size: clamp(50px, 8vw, 115px);
+            line-height: .92;
+            letter-spacing: -.08em;
+        }
+
+        .process-step {
+            border-top: 1px solid rgba(8, 13, 18, .3);
+            padding-top: 25px;
+        }
+
+        .process-number {
+            font-family: var(--font-display);
+            font-size: 54px;
+            letter-spacing: -.06em;
+        }
+
+        /* =========================================
+   CARBON CREDITS
+========================================= */
+
+        .carbon {
+            position: relative;
+            background: var(--black);
+            overflow: hidden;
+        }
+
+        .carbon-card {
+            position: relative;
+            min-height: 430px;
+            border-radius: 28px;
+            overflow: hidden;
+
+            background:
+                radial-gradient(circle at 80% 10%, rgba(199, 243, 107, .18), transparent 45%),
+                #14201B;
+
+            border: 1px solid rgba(199, 243, 107, .2);
+        }
+
+        .carbon-number {
+            font-size: clamp(60px, 10vw, 130px);
+            letter-spacing: -.09em;
+            line-height: .85;
+            color: var(--lime);
+        }
+
+        .leaf-decoration {
+            position: absolute;
+            right: -35px;
+            bottom: -80px;
+            font-size: 330px;
+            color: rgba(199, 243, 107, .07);
+            transform: rotate(-30deg);
+        }
+
+        /* =========================================
+   CINEMATIC TEAM INTRODUCTION
+========================================= */
+        .civix-team-section {
+            background: #0B1220;
+            color: #fff;
+            overflow: clip
+        }
+
+        .team-heading {
+            font-size: clamp(65px, 12vw, 160px);
+            line-height: .82;
+            letter-spacing: -.095em;
+        }
+
+        .team-outline {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, .45);
+        }
+
+        .civix-team-heading {
+            padding-top: clamp(90px, 12vw, 180px);
+            padding-bottom: clamp(35px, 6vw, 75px)
+        }
+
+        .civix-team-pin {
+            height: 100svh;
+            min-height: 580px;
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            background: #080D12
+        }
+
+        .civix-team-pin:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, .055), transparent 58%);
+            pointer-events: none
+        }
+
+        .civix-team-progress {
+            position: absolute;
+            z-index: 30;
+            top: 12.5%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, .1)
+        }
+
+        .civix-team-progress span {
+            display: block;
+            width: 0;
+            height: 100%;
+            background: #C7F36B
+        }
+
+        .civix-team-count {
+            position: absolute;
+            z-index: 30;
+            top: 15%;
+            left: 6%;
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: #89939d
+        }
+
+        .civix-team-count strong {
+            color: #C7F36B;
+            font-size: 18px
+        }
+
+        .civix-member {
+            position: absolute;
+            inset: 0;
+            visibility: hidden;
+            opacity: 0;
+            overflow: hidden
+        }
+
+        .civix-member-disc {
+            position: absolute;
+            width: min(37vw, 490px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(.55);
+            background: #F04438;
+            opacity: 0;
+            z-index: 0
+        }
+
+        .civix-member-photo {
+            position: absolute;
+            z-index: 2;
+            left: 50%;
+            top: 50%;
+            width: min(32vw, 410px);
+            height: min(72vh, 630px);
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            border-radius: 4px;
+            background: #222;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, .48);
+            margin: 0;
+            will-change: transform
+        }
+
+        .civix-member-photo img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            filter: grayscale(0%);
+            transform: scale(1.02);
+            will-change: filter, transform
+        }
+
+        /* Odd members finish photo-left / copy-right */
+        .civix-member:nth-of-type(odd) .civix-member-copy {
+            left: 55%;
+            text-align: left
+        }
+
+        /* Even members finish photo-right / copy-left */
+        .civix-member:nth-of-type(even) .civix-member-copy {
+            left: 5%;
+            text-align: left
+        }
+
+        .civix-member-copy {
+            position: absolute;
+            z-index: 5;
+            top: 55%;
+            width: 39%;
+            transform: translateY(-45%);
+            opacity: 0;
+            visibility: hidden;
+            will-change: transform, opacity
+        }
+
+        .civix-member-index {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: #C7F36B;
+            margin-bottom: 22px
+        }
+
+        .civix-member-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(48px, 7.2vw, 112px);
+            line-height: .8;
+            letter-spacing: -.075em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #A9D94E;
+            overflow-wrap: anywhere
+        }
+
+        .civix-member-name span {
+            display: block;
+            color: #F4F5EF;
+            margin-top: 9px
+        }
+
+        .civix-member-role {
+            display: inline-block;
+            margin-top: 28px;
+            font-size: 11px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #C7F36B;
+            border-left: 2px solid #C7F36B;
+            padding-left: 13px
+        }
+
+        .civix-member-bio {
+            color: #A2ACB5;
+            font-size: 14px;
+            line-height: 1.8;
+            max-width: 380px;
+            margin-top: 18px
+        }
+
+        .civix-member-word {
+            position: absolute;
+            z-index: 1;
+            left: 3%;
+            bottom: -7%;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(100px, 18vw, 280px);
+            font-weight: 700;
+            white-space: nowrap;
+            color: rgba(255, 255, 255, .035);
+            pointer-events: none
+        }
+
+        .civix-team-side-label {
+            position: absolute;
+            right: 4%;
+            bottom: 30px;
+            writing-mode: vertical-rl;
+            color: #75808a;
+            font-size: 10px;
+            letter-spacing: 3px;
+            z-index: 10
+        }
+
+        .civix-team-finale {
+            position: absolute;
+            inset: 0;
+            z-index: 25;
+            visibility: hidden;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: #C7F36B;
+            color: #080D12
+        }
+
+        .civix-team-finale>span {
+            font-size: 11px;
+            letter-spacing: 4px;
+            font-weight: 700
+        }
+
+        .civix-team-finale h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(58px, 11vw, 150px);
+            line-height: .8;
+            letter-spacing: -.075em;
+            font-weight: 700;
+            margin-top: 24px
+        }
+
+        .civix-team-finale p {
+            margin-top: 30px;
+            font-size: 11px;
+            letter-spacing: 4px
+        }
+
+        @media(max-width:760px) {
+            .civix-team-heading {
+                padding-left: 6%;
+                padding-right: 6%
+            }
+
+            .civix-team-pin {
+                min-height: 560px
+            }
+
+            .civix-member-photo {
+                width: 34vw;
+                height: 44svh;
+                max-height: 390px
+            }
+
+            .civix-member-disc {
+                width: 44vw
+            }
+
+            .civix-member-copy {
+                top: 55%;
+                width: 43%;
+                transform: translateY(-45%);
+            }
+
+            .civix-member:nth-of-type(odd) .civix-member-copy {
+                left: 55%
+            }
+
+            .civix-member:nth-of-type(even) .civix-member-copy {
+                left: 3%
+            }
+
+            .civix-member-index {
+                font-size: 8px;
+                letter-spacing: 1.5px;
+                margin-bottom: 12px
+            }
+
+            .civix-member-name {
+                font-size: clamp(29px, 7.8vw, 56px);
+                letter-spacing: -.07em;
+                line-height: .86
+            }
+
+            .civix-member-name span {
+                margin-top: 6px
+            }
+
+            .civix-member-role {
+                margin-top: 13px;
+                font-size: 8px;
+                letter-spacing: 1px;
+                padding-left: 8px
+            }
+
+            .civix-member-bio {
+                font-size: 10px;
+                line-height: 1.5;
+                margin-top: 10px
+            }
+
+            .civix-member-word {
+                font-size: 29vw;
+                bottom: 8%
+            }
+
+            .civix-team-count {
+                top: 23px
+            }
+
+            .civix-team-side-label {
+                display: none
+            }
+
+            .civix-team-finale h2 {
+                letter-spacing: -.06em
+            }
+        }
+
+        @media(max-width:390px) {
+            .civix-member-photo {
+                width: 32vw;
+                height: 39svh
+            }
+
+            .civix-member-name {
+                font-size: 27px
+            }
+
+            .civix-member-bio {
+                font-size: 9px
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            .civix-team-pin {
+                height: auto;
+                min-height: 0;
+                overflow: visible
+            }
+
+            .civix-member {
+                position: relative;
+                inset: auto;
+                visibility: visible !important;
+                opacity: 1 !important;
+                min-height: 70vh;
+                display: flex;
+                align-items: center
+            }
+
+            .civix-member-photo {
+                left: 6%;
+                top: 8%;
+                transform: none;
+                width: 38%;
+                height: 42vh
+            }
+
+            .civix-member-copy {
+                left: 48%;
+                top: 60%;
+                width: 47%;
+                transform: none;
+                visibility: visible;
+                opacity: 1
+            }
+
+            .civix-member-disc,
+            .civix-member-word,
+            .civix-team-progress,
+            .civix-team-count,
+            .civix-team-side-label,
+            .civix-team-finale {
+                display: none
+            }
+        }
+
+        /* =========================================
+   CONTACT & TOAST NOTIFICATION
+========================================= */
+
+        .contact {
+            background: var(--midnight);
+        }
+
+        .contact-title {
+            font-size: clamp(60px, 10vw, 135px);
+            letter-spacing: -.09em;
+            line-height: .87;
+        }
+
+        .input-field {
+            display: block;
+            width: 100%;
+            padding: 17px 0;
+
+            background: transparent;
+            color: white;
+
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, .2);
+
+            outline: none;
+            font-family: var(--font-body);
+
+            transition: border .3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--lime);
+        }
+
+        .input-field::placeholder {
+            color: #77818F;
+        }
+
+        /* Toast Popup Styles */
+        .civix-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 24px;
+            background: #101827;
+            border: 1px solid rgba(199, 243, 107, 0.4);
+            border-radius: 14px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            transform: translateY(120%);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
+
+        .civix-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* =========================================
+   FOOTER
+========================================= */
+
+        .footer {
+            background: var(--black);
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: clamp(75px, 17vw, 220px);
+            line-height: .8;
+            font-weight: 700;
+            letter-spacing: -.03em;
+        }
+
+        .footer-logo span {
+            color: var(--lime);
+        }
+
+        /* =========================================
+   REVEAL STATES
+========================================= */
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(45px);
+        }
+
+        .team-reveal {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* =========================================
+   RESPONSIVE
+========================================= */
+
+        @media (max-width: 768px) {
+
+            .section-padding {
+                padding: 95px 6%;
+            }
+
+            #navbar {
+                padding: 18px 6%;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .mobile-nav {
+                display: flex;
+                flex-direction: column;
+                gap: 23px;
+
+                padding: 25px;
+                margin-top: 18px;
+
+                background: #151F2D;
+                border: 1px solid var(--border);
+                border-radius: 14px;
+            }
+
+            .hero-content {
+                padding: 150px 6% 100px;
+            }
+
+            .hero-bottom {
+                flex-direction: column;
+                align-items: start;
+                margin-top: 45px;
+            }
+
+            .hero-index {
+                left: 6%;
+                right: 6%;
+                gap: 12px;
+                font-size: 8px;
+            }
+
+            .team-stage {
+                min-height: 580px;
+                height: 75svh;
+            }
+
+            .team-content {
+                left: 7%;
+                right: 7%;
+                bottom: 13%;
+            }
+
+            .team-index {
+                left: 20px;
+                top: 30px;
+            }
+
+            .team-counter {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body ng-controller="CivixController">
+
+    <!-- =========================================
+     NAVBAR
+========================================= -->
+
+    <nav id="navbar">
+
+        <div class="nav-inner">
+
+            <a href="#home" class="nav-logo">
+                CIVIX<span class="text-lime">.</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#process">How it works</a>
+                <a href="#team">Our Team</a>
+                <a href="#contact" class="lime-button">
+                    Let's Connect <i class="ri-arrow-right-up-line"></i>
+                </a>
+            </div>
+
+            <button class="mobile-toggle" ng-click="menuOpen = !menuOpen" aria-label="Toggle navigation">
+
+                <i ng-class="menuOpen ? 'ri-close-line' : 'ri-menu-3-line'"></i>
+
+            </button>
+
+        </div>
+
+        <div class="mobile-nav" ng-show="menuOpen">
+            <a href="#about" ng-click="menuOpen=false">About</a>
+            <a href="#process" ng-click="menuOpen=false">How it works</a>
+            <a href="#team" ng-click="menuOpen=false">Our Team</a>
+            <a href="#contact" ng-click="menuOpen=false">Contact</a>
+        </div>
+
+    </nav>
+
+    <!-- =========================================
+     FLOATING TOAST NOTIFICATION
+========================================= -->
+    <div id="civixToast" class="civix-toast">
+        <div class="w-8 h-8 rounded-full bg-[#C7F36B]/20 flex items-center justify-center text-[#C7F36B] shrink-0">
+            <i class="ri-checkbox-circle-fill text-lg"></i>
+        </div>
+        <div>
+            <p class="font-display text-sm font-semibold text-white">Message Sent!</p>
+            <p class="text-xs text-white/60" id="toastMessage">Your message has been delivered successfully.</p>
+        </div>
+    </div>
+
+    <main>
+
+        <!-- =========================================
+     HERO
+========================================= -->
+
+        <section class="hero" id="home">
+
+            <div class="hero-grid"></div>
+            <div class="hero-glow"></div>
+            <div class="noise"></div>
+
+            <div class="hero-content">
+
+                <div class="hero-label flex items-center gap-3 mb-9">
+                    <span class="w-2 h-2 rounded-full bg-[#C7F36B]"></span>
+
+                    <p class="eyebrow text-white/50">
+                        A New Era of Civic Intelligence
+                    </p>
+                </div>
+
+                <h1 class="hero-title">
+
+                    <div class="hero-line">
+                        <span>THE CITY</span>
+                    </div>
+
+                    <div class="hero-line">
+                        <span class="lime">THAT LISTENS.</span>
+                    </div>
+
+                </h1>
+
+                <div class="hero-bottom">
+
+                    <p class="hero-description">
+                        A digital civic intelligence platform that
+                        transforms
+                        public complaints into structured, trackable action.
+
+                        <br><br>
+
+                        Because every voice matters.
+                        And every street deserves attention.
+                    </p>
+
+                    <a href="#about" class="lime-button hero-cta">
+                        Explore the Initiative
+                        <i class="ri-arrow-down-line"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="hero-index">
+                <span>01 / REPORT</span>
+                <span>02 / CONNECT</span>
+                <span>03 / PRIORITIZE</span>
+                <span>04 / RESOLVE</span>
+            </div>
+
+        </section>
+
+        <!-- =========================================
+     ABOUT
+========================================= -->
+
+        <section id="about" class="about section-padding">
+
+            <div class="max-w-[1500px] mx-auto">
+
+                <div class="eyebrow mb-12 reveal">
+                    01 — THE INITIATIVE
+                </div>
+
+                <div class="grid md:grid-cols-12 gap-12">
+
+                    <div class="md:col-span-8">
+
+                        <h2 class="about-heading reveal">
+                            A better city<br>
+                            begins with<br>
+                            <span class="about-highlight">being
+                                heard.</span>
+                        </h2>
+
+                    </div>
+
+                    <div class="md:col-span-4 md:pt-16 reveal">
+
+                        <p class="about-copy">
+                            Civic problems often go unnoticed, unreported,
+                            or unresolved.
+
+                            CIVIX bridges that gap by giving people a shared
+                            digital space to report issues, understand
+                            priorities,
+                            and follow progress.
+                        </p>
+
+                        <p class="about-copy mt-5">
+                            From damaged roads to broken streetlights,
+                            every valid report contributes to a clearer
+                            picture
+                            of what our communities need.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-5 mt-24">
+
+                    <article class="feature-card reveal">
+
+                        <i class="ri-map-pin-line feature-icon"></i>
+
+                        <p class="eyebrow text-black/40 mt-12">01 / LOCAL
+                            VOICES</p>
+
+                        <h3 class="text-2xl mt-3 font-display">
+                            Report what matters.
+                        </h3>
+
+                        <p class="text-black/55 text-sm leading-relaxed mt-4">
+                            Capture civic problems using photographs,
+                            categories, and geographic location.
+                        </p>
+
+                    </article>
+
+                    <article class="feature-card reveal">
+
+                        <i class="ri-brain-line feature-icon"></i>
+
+                        <p class="eyebrow text-black/40 mt-12">02 /
+                            INTELLIGENCE</p>
+
+                        <h3 class="text-2xl mt-3 font-display">
+                            Understand the issue.
+                        </h3>
+
+                        <p class="text-black/55 text-sm leading-relaxed mt-4">
+                            Duplicate detection, issue categorization,
+                            and explainable priority calculations.
+                        </p>
+
+                    </article>
+
+                    <article class="feature-card reveal">
+
+                        <i class="ri-route-line feature-icon"></i>
+
+                        <p class="eyebrow text-black/40 mt-12">03 /
+                            ACCOUNTABILITY</p>
+
+                        <h3 class="text-2xl mt-3 font-display">
+                            Track every step.
+                        </h3>
+
+                        <p class="text-black/55 text-sm leading-relaxed mt-4">
+                            Monitor issue status, progress updates,
+                            and resolution through one interface.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =========================================
+     INTELLIGENCE
+========================================= -->
+
+        <section class="intelligence section-padding">
+
+            <div class="max-w-[1500px] mx-auto grid md:grid-cols-2 gap-16 items-center">
+
+                <div>
+
+                    <p class="eyebrow text-lime mb-8 reveal">
+                        Beyond a complaint box
+                    </p>
+
+                    <h2 class="intelligence-title reveal">
+                        FROM<br>
+                        REPORTED.<br>
+                        TO <span class="text-lime">RESOLVED.</span>
+                    </h2>
+
+                    <p class="text-white/50 leading-relaxed max-w-lg mt-9 reveal">
+                        CIVIX creates a transparent journey for civic
+                        issues,
+                        connecting public participation with structured
+                        reporting and accountable resolution tracking.
+                    </p>
+
+                </div>
+
+                <!-- map-panel updated to overflow-visible so top popups are never cut -->
+                <div class="map-panel reveal relative overflow-visible rounded-[25px]"
+                    style="overflow: visible !important;">
+
+                    <!-- Clipped Inner Container for Map Background & Border -->
+                    <div
+                        class="absolute inset-0 rounded-[25px] overflow-hidden pointer-events-none border border-white/10">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity transition-transform duration-700 group-hover:scale-105"
+                            style="background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80');">
+                        </div>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-[#080D12] via-transparent to-[#080D12]/60 pointer-events-none">
+                        </div>
+                    </div>
+
+                    <!-- Interactive Map Pins with Hover Report Cards -->
+                    <!-- Pin 1 -->
+                    <div class="absolute z-30" style="top:25%; left:30%;">
+                        <div class="map-pin-wrapper relative cursor-pointer group/pin">
+                            <span class="map-dot block"></span>
+                            <div
+                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-64 p-4 rounded-xl bg-[#101827]/98 border border-white/20 shadow-2xl backdrop-blur-md opacity-0 translate-y-2 pointer-events-none transition-all duration-300 group-hover/pin:opacity-100 group-hover/pin:translate-y-0 group-hover/pin:pointer-events-auto">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[10px] uppercase tracking-wider text-lime font-mono">ID:
+                                        #CX-8402</span>
+                                    <span
+                                        class="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">Pending</span>
+                                </div>
+                                <h4 class="font-display text-sm font-semibold text-white mb-1">Severe Pothole Damage
+                                </h4>
+                                <p class="text-xs text-white/60 mb-3">Main Street Junction, Sector 4 — Reported 12m ago
+                                </p>
+                                <div
+                                    class="flex items-center justify-between text-[11px] text-white/40 pt-2 border-t border-white/10">
+                                    <span>Severity: High</span>
+                                    <span class="text-lime">View Report →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pin 2 -->
+                    <div class="absolute z-30" style="top:48%; left:65%;">
+                        <div class="map-pin-wrapper relative cursor-pointer group/pin">
+                            <span class="map-dot block" style="animation-delay:.4s"></span>
+                            <div
+                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-64 p-4 rounded-xl bg-[#101827]/98 border border-white/20 shadow-2xl backdrop-blur-md opacity-0 translate-y-2 pointer-events-none transition-all duration-300 group-hover/pin:opacity-100 group-hover/pin:translate-y-0 group-hover/pin:pointer-events-auto">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[10px] uppercase tracking-wider text-lime font-mono">ID:
+                                        #CX-8391</span>
+                                    <span
+                                        class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">In
+                                        Progress</span>
+                                </div>
+                                <h4 class="font-display text-sm font-semibold text-white mb-1">Broken Streetlight Pole
+                                </h4>
+                                <p class="text-xs text-white/60 mb-3">Park Avenue Block C — Reported 1h ago</p>
+                                <div
+                                    class="flex items-center justify-between text-[11px] text-white/40 pt-2 border-t border-white/10">
+                                    <span>Severity: Medium</span>
+                                    <span class="text-lime">View Report →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pin 3 -->
+                    <div class="absolute z-30" style="top:70%; left:40%;">
+                        <div class="map-pin-wrapper relative cursor-pointer group/pin">
+                            <span class="map-dot block" style="animation-delay:.8s"></span>
+                            <div
+                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-64 p-4 rounded-xl bg-[#101827]/98 border border-white/20 shadow-2xl backdrop-blur-md opacity-0 translate-y-2 pointer-events-none transition-all duration-300 group-hover/pin:opacity-100 group-hover/pin:translate-y-0 group-hover/pin:pointer-events-auto">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[10px] uppercase tracking-wider text-lime font-mono">ID:
+                                        #CX-8375</span>
+                                    <span
+                                        class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Resolved</span>
+                                </div>
+                                <h4 class="font-display text-sm font-semibold text-white mb-1">Water Pipeline Leakage
+                                </h4>
+                                <p class="text-xs text-white/60 mb-3">MG Road Crossings — Reported 3h ago</p>
+                                <div
+                                    class="flex items-center justify-between text-[11px] text-white/40 pt-2 border-t border-white/10">
+                                    <span>Severity: Critical</span>
+                                    <span class="text-lime">View Report →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pin 4 -->
+                    <div class="absolute z-30" style="top:65%; left:80%;">
+                        <div class="map-pin-wrapper relative cursor-pointer group/pin">
+                            <span class="map-dot block" style="animation-delay:1.2s"></span>
+                            <div
+                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-64 p-4 rounded-xl bg-[#101827]/98 border border-white/20 shadow-2xl backdrop-blur-md opacity-0 translate-y-2 pointer-events-none transition-all duration-300 group-hover/pin:opacity-100 group-hover/pin:translate-y-0 group-hover/pin:pointer-events-auto">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[10px] uppercase tracking-wider text-lime font-mono">ID:
+                                        #CX-8360</span>
+                                    <span
+                                        class="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">Pending</span>
+                                </div>
+                                <h4 class="font-display text-sm font-semibold text-white mb-1">Overflowing Garbage Bin
+                                </h4>
+                                <p class="text-xs text-white/60 mb-3">Market Square Lane 2 — Reported 5h ago</p>
+                                <div
+                                    class="flex items-center justify-between text-[11px] text-white/40 pt-2 border-t border-white/10">
+                                    <span>Severity: Low</span>
+                                    <span class="text-lime">View Report →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Live Status Banner -->
+                    <div
+                        class="absolute z-30 bottom-6 left-6 right-6 bg-[#080D12]/90 border border-white/10 rounded-xl p-5 backdrop-blur-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="eyebrow text-white/40">
+                                    CIVIC INTELLIGENCE
+                                </p>
+                                <h3 class="font-display text-xl mt-2">
+                                    Community Issue Map
+                                </h3>
+                            </div>
+                            <span class="text-lime text-xs">
+                                <i class="ri-pulse-line"></i> LIVE CONCEPT
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =========================================
+     PROCESS
+========================================= -->
+
+        <section id="process" class="process section-padding">
+
+            <div class="max-w-[1500px] mx-auto">
+
+                <p class="eyebrow mb-8 reveal">
+                    02 — THE PROCESS
+                </p>
+
+                <h2 class="process-title reveal">
+                    SIMPLE FOR PEOPLE.<br>
+                    INTELLIGENT UNDERNEATH.
+                </h2>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-9 mt-24">
+
+                    <div class="process-step reveal">
+                        <span class="process-number">01</span>
+                        <h3 class="text-xl font-display mt-8">Capture.</h3>
+                        <p class="text-sm text-black/65 mt-3 leading-relaxed">
+                            Submit a civic issue with an image and location.
+                        </p>
+                    </div>
+
+                    <div class="process-step reveal">
+                        <span class="process-number">02</span>
+                        <h3 class="text-xl font-display mt-8">Connect.</h3>
+                        <p class="text-sm text-black/65 mt-3 leading-relaxed">
+                            Identify similar reports and potential
+                            duplicates.
+                        </p>
+                    </div>
+
+                    <div class="process-step reveal">
+                        <span class="process-number">03</span>
+                        <h3 class="text-xl font-display mt-8">Prioritize.</h3>
+                        <p class="text-sm text-black/65 mt-3 leading-relaxed">
+                            Calculate priority using severity, urgency,
+                            and community impact.
+                        </p>
+                    </div>
+
+                    <div class="process-step reveal">
+                        <span class="process-number">04</span>
+                        <h3 class="text-xl font-display mt-8">Resolve.</h3>
+                        <p class="text-sm text-black/65 mt-3 leading-relaxed">
+                            Follow progress and see resolution updates.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =========================================
+     CARBON CREDITS
+========================================= -->
+
+        <section class="carbon section-padding">
+
+            <div class="max-w-[1500px] mx-auto grid md:grid-cols-2 gap-14 items-center">
+
+                <div>
+
+                    <p class="eyebrow text-lime mb-8 reveal">
+                        03 — Contribution Meets Nature
+                    </p>
+
+                    <h2 class="text-[clamp(55px,8vw,110px)] leading-[.9] tracking-[-.085em] reveal">
+                        SMALL<br>
+                        ACTIONS.<br>
+                        <span class="text-lime">GREENER</span><br>
+                        TOMORROWS.
+                    </h2>
+
+                    <p class="text-white/50 leading-relaxed mt-8 max-w-lg reveal">
+                        Every valid civic report is an act of community
+                        participation.
+
+                        CIVIX introduces a contribution-based credit concept
+                        that recognizes verified participation and
+                        encourages
+                        people to care for the places they call home.
+                    </p>
+
+                </div>
+
+                <div class="carbon-card p-8 md:p-12 flex flex-col justify-between reveal">
+
+                    <i class="ri-leaf-line leaf-decoration"></i>
+
+                    <div class="relative flex justify-between items-center">
+                        <span class="eyebrow text-white/50">
+                            CIVIX / CONTRIBUTION
+                        </span>
+
+                        <i class="ri-seedling-line text-lime text-3xl"></i>
+                    </div>
+
+                    <div class="relative">
+
+                        <p class="text-white/50 text-sm">
+                            Your contribution has value.
+                        </p>
+
+                        <h3 class="carbon-number font-display mt-5">
+                            + CREDITS
+                        </h3>
+
+                        <p class="text-white/50 text-sm mt-5">
+                            Participate. Contribute. Improve.
+                        </p>
+
+                    </div>
+
+                    <div class="relative border-t border-white/15 pt-5 flex justify-between items-center">
+
+                        <span class="eyebrow text-white/40">
+                            A BETTER TOMORROW
+                        </span>
+
+                        <i class="ri-arrow-up-right-line text-lime text-xl"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =========================================
+     CINEMATIC TEAM INTRODUCTION
+========================================= -->
+        <section id="team" class="civix-team-section border-t-2 border-[#c7f36b5e]">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-8 bg-[#080D12] section-padding">
+
+                <div>
+                    <p class="eyebrow text-lime mb-8 reveal">
+                        04 — The Minds Behind CIVIX
+                    </p>
+                    <h2 class="team-heading reveal">
+                        BUILT BY<br>
+                        <span class="team-outline">FIVE.</span>
+                    </h2>
+                </div>
+                <p class="text-white/45 text-sm leading-relaxed max-w-xs reveal">
+                    Five individuals. Different disciplines.
+                    One shared vision — building technology
+                    that listens to people.
+                </p>
+
+            </div>
+
+            <div class="civix-team-pin" id="civixTeamPin" aria-label="CIVIX team members, revealed one by one">
+                <div class="civix-team-progress"><span id="civixTeamProgress"></span></div>
+                <div class="civix-team-count">CIVIX / <strong id="civixTeamCount">01</strong> — 05</div>
+
+                <article class="civix-member" aria-label="Aryan Chheda, Team Lead and Lead Developer">
+                    <div class="civix-member-word" aria-hidden="true">VISION</div>
+                    <div class="civix-member-disc" id="civix-member-disc"></div>
+                    <figure class="civix-member-photo"><img
+                            src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                            alt="Aryan Chheda portrait" loading="eager"></figure>
+                    <div class="civix-member-copy"><span class="civix-member-index">01 / THE
+                            VISIONARY</span>
+                        <h3 class="civix-member-name">ARYAN<span>CHHEDA</span></h3>
+                        <div class="civix-member-role">Team Lead / Lead
+                            Developer</div>
+                        <p class="civix-member-bio">Leading the vision,
+                            architecture, and development of CIVIX — turning
+                            an
+                            ambitious idea into a meaningful digital
+                            experience.</p>
+                    </div>
+                </article>
+
+                <article class="civix-member" aria-label="Shivam Prajapati, AI Developer">
+                    <div class="civix-member-word" aria-hidden="true">INTELLIGENCE</div>
+                    <div class="civix-member-disc"></div>
+                    <figure class="civix-member-photo"><img
+                            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                            alt="Shivam Prajapati portrait" loading="lazy"></figure>
+                    <div class="civix-member-copy"><span class="civix-member-index">02 / THE
+                            THINKER</span>
+                        <h3 class="civix-member-name">SHIVAM<span>PRAJAPATI</span></h3>
+                        <div class="civix-member-role">AI Developer</div>
+                        <p class="civix-member-bio">Exploring intelligent
+                            systems, data processing, and algorithmic
+                            thinking
+                            to make civic reporting more useful.</p>
+                    </div>
+                </article>
+
+                <article class="civix-member" aria-label="Abhay Pavar, Frontend Developer">
+                    <div class="civix-member-word" aria-hidden="true">INTERACTION</div>
+                    <div class="civix-member-disc"></div>
+                    <figure class="civix-member-photo"><img
+                            src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                            alt="Abhay Pavar portrait" loading="lazy"></figure>
+                    <div class="civix-member-copy"><span class="civix-member-index">03 / THE
+                            BUILDER</span>
+                        <h3 class="civix-member-name">ABHAY<span>PAVAR</span></h3>
+                        <div class="civix-member-role">Frontend
+                            Developer</div>
+                        <p class="civix-member-bio">Building responsive
+                            interfaces and bringing the CIVIX experience to
+                            life
+                            through frontend engineering.</p>
+                    </div>
+                </article>
+
+                <article class="civix-member" aria-label="Yug Patel, UI UX Developer">
+                    <div class="civix-member-word" aria-hidden="true">EXPERIENCE</div>
+                    <div class="civix-member-disc"></div>
+                    <figure class="civix-member-photo"><img
+                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                            alt="Yug Patel portrait" loading="lazy"></figure>
+                    <div class="civix-member-copy"><span class="civix-member-index">04 / THE
+                            DESIGNER</span>
+                        <h3 class="civix-member-name">YUG<span>PATEL</span></h3>
+                        <div class="civix-member-role">UI / UX
+                            Developer</div>
+                        <p class="civix-member-bio">Shaping intuitive user
+                            journeys, visual hierarchy, and interaction
+                            design so civic technology feels clear and
+                            accessible.</p>
+                    </div>
+                </article>
+
+                <article class="civix-member" aria-label="Neel Patel, Supporting Contributor">
+                    <div class="civix-member-word" aria-hidden="true">TEAMWORK</div>
+                    <div class="civix-member-disc"></div>
+                    <figure class="civix-member-photo"><img
+                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                            alt="Neel Patel portrait" loading="lazy"></figure>
+                    <div class="civix-member-copy"><span class="civix-member-index">05 / THE
+                            SUPPORT</span>
+                        <h3 class="civix-member-name">NEEL<span>PATEL</span></h3>
+                        <div class="civix-member-role">Supporting
+                            Contributor</div>
+                        <p class="civix-member-bio">Supporting testing,
+                            documentation, sample data, and coordination to
+                            help
+                            the shared CIVIX vision become reality.</p>
+                    </div>
+                </article>
+
+                <div class="civix-team-finale"><span>FIVE MINDS. ONE
+                        MISSION.</span>
+                    <h2>WE ARE<br>CIVIX.</h2>
+                    <p>THE CITY THAT LISTENS.</p>
+                </div>
+                <div class="civix-team-side-label">SCROLL TO MEET THE
+                    TEAM</div>
+            </div>
+        </section>
+
+        <!-- =========================================
+     CONTACT
+========================================= -->
+
+        <section id="contact" class="contact section-padding">
+
+            <div class="max-w-[1500px] mx-auto grid md:grid-cols-2 gap-20">
+
+                <div>
+
+                    <p class="eyebrow text-lime mb-8 reveal">
+                        05 — Let's Connect
+                    </p>
+
+                    <h2 class="contact-title reveal">
+                        YOUR CITY.<br>
+                        YOUR <span class="text-lime">VOICE.</span>
+                    </h2>
+
+                    <p class="text-white/50 max-w-md leading-relaxed mt-8 reveal">
+                        Have an idea, a suggestion, or a question about
+                        CIVIX?
+                        We would love to hear from you.
+                    </p>
+
+                    <div class="mt-12 reveal">
+
+                        <p class="eyebrow text-white/40 mb-3">EMAIL US</p>
+
+                        <a href="mailto:hello@civix.in" class="text-xl hover:text-lime transition">
+                            hello@civix.in
+                            <i class="ri-arrow-up-right-line"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <form name="contactForm" ng-submit="submitForm(contactForm)" novalidate class="reveal">
+
+                    <div class="mb-8">
+
+                        <label class="eyebrow text-white/50" for="name">
+                            YOUR NAME
+                        </label>
+
+                        <input id="name" name="name" ng-model="form.name" type="text" required minlength="2"
+                            placeholder="John Doe" class="input-field">
+
+                        <p class="text-red-300 text-xs mt-2"
+                            ng-show="contactForm.name.$touched && contactForm.name.$invalid">
+                            Please enter your name.
+                        </p>
+
+                    </div>
+
+                    <div class="mb-8">
+
+                        <label class="eyebrow text-white/50" for="email">
+                            EMAIL ADDRESS
+                        </label>
+
+                        <input id="email" name="email" ng-model="form.email" type="email" required
+                            placeholder="john@example.com" class="input-field">
+
+                        <p class="text-red-300 text-xs mt-2"
+                            ng-show="contactForm.email.$touched && contactForm.email.$invalid">
+                            Enter a valid email address.
+                        </p>
+
+                    </div>
+
+                    <div class="mb-10">
+
+                        <label class="eyebrow text-white/50" for="message">
+                            YOUR MESSAGE
+                        </label>
+
+                        <textarea id="message" name="message" ng-model="form.message" required minlength="10" rows="4"
+                            placeholder="Tell us what's on your mind..." class="input-field resize-none"></textarea>
+
+                        <p class="text-red-300 text-xs mt-2"
+                            ng-show="contactForm.message.$touched && contactForm.message.$invalid">
+                            Please enter at least 10 characters.
+                        </p>
+
+                    </div>
+
+                    <button type="submit" class="lime-button w-full justify-between" ng-disabled="isSubmitting">
+                        <span ng-if="!isSubmitting">Send your message</span>
+                        <span ng-if="isSubmitting">Sending message...</span>
+                        <i
+                            ng-class="isSubmitting ? 'ri-loader-4-line animate-spin text-xl' : 'ri-arrow-right-up-line text-xl'"></i>
+                    </button>
+
+                    <p ng-show="submitted && successMessage" class="text-lime text-sm mt-5 font-medium">
+                        {{successMessage}}
+                    </p>
+
+                    <p ng-show="submitted && errorMessage" class="text-red-400 text-sm mt-5 font-medium">
+                        {{errorMessage}}
+                    </p>
+
+                    <p class="text-white/30 text-xs mt-5">
+                        Connected to backend API at localhost:5000.
+                    </p>
+
+                </form>
+
+            </div>
+
+        </section>
+
+<!-- =========================================
+     FOOTER
+========================================= -->
+
+        <footer class="footer px-[7%] pt-20 pb-12">
+
+            <div class="max-w-[1500px] mx-auto">
+
+                <div class="flex justify-between items-center mb-10">
+
+                    <p class="eyebrow text-white/40">
+                        THE CITY THAT LISTENS.
+                    </p>
+
+                    <a href="#home" class="text-lime text-sm">
+                        Back to top ↑
+                    </a>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-end pt-6 border-t border-white/10">
+
+                    <!-- Left Column: CIVIX Branding -->
+                    <div>
+                        <a href="#home" class="footer-logo block mb-4 group text-white hover:text-[#c7f36b] transition-colors">
+                            CIVIX<span class="text-lime transition-colors">.</span>
+                        </a>
+                        <p class="text-white/40 text-xs tracking-wider uppercase">
+                            Digital Civic Intelligence Platform
+                        </p>
+                    </div>
+
+                    <!-- Right Column: Minimalist Personal Branding & Links -->
+                    <div class="flex flex-col md:items-end justify-between h-full gap-6 md:gap-0">
+                        <div class="flex items-start md:items-end justify-center flex-col">
+                            <p class="font-display text-lg text-lime font-semibold text-white mb-1">Aryan Chheda</p>
+                            <p class="text-xs text-white/50 text-left md:text-right">
+                                Full-Stack Developer turning ideas into impactful web experiences.
+                            </p>
+                        </div>
+                        <div class="flex items-start md:items-end justify-center flex-col w-full">
+                            <blockquote class="text-md font-semibold italic text-neutral-200/60 mb-6 text-left md:text-right border-l-2 md:border-l-0 md:border-r-2 border-lime pl-3 md:pl-0 md:pr-3 py-0.5">
+                                "The best things in life aren't things."
+                            </blockquote>
+
+                            <div class="flex flex-wrap gap-x-4 gap-y-2 md:justify-end text-xs text-white/70">
+                                <a href="https://ac-portfolio-phi.vercel.app" target="_blank"
+                                    class="hover:text-[#c7f36b] transition-colors">
+                                    Portfolio
+                                </a>
+                                <span class="text-white/20 hidden md:inline">•</span>
+                                <a href="https://in.linkedin.com/in/aryan-chheda-19ab54363" target="_blank"
+                                    class="hover:text-[#c7f36b] transition-colors">
+                                    LinkedIn
+                                </a>
+                                <span class="text-white/20 hidden md:inline">•</span>
+                                <a href="https://github.com/Aryan18-dotcom" target="_blank"
+                                    class="hover:text-[#c7f36b] transition-colors">
+                                    GitHub
+                                </a>
+                                <span class="text-white/20 hidden md:inline">•</span>
+                                <a href="mailto:aryanchheda22@gmail.com" class="hover:text-[#c7f36b] transition-colors">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div
+                    class="border-t border-white/10 mt-16 pt-7 flex flex-col md:flex-row justify-between gap-5 items-center">
+
+                    <p class="text-white/35 text-xs">
+                        © 2026 CIVIX. All rights reserved.
+                    </p>
+
+                    <p class="text-white/65 text-xs">
+                        Creatively Created By
+                        <span class="text-lime font-semibold">AC.</span>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </main>
+
+    <!-- =========================================
+     ANGULARJS + GSAP
+========================================= -->
+
+    <script>
+
+        const app = angular.module("civixApp", []);
+
+        app.controller("CivixController", function ($scope, $timeout) {
+
+            $scope.menuOpen = false;
+            $scope.submitted = false;
+            $scope.isSubmitting = false;
+            $scope.successMessage = "";
+            $scope.errorMessage = "";
+
+            $scope.form = {
+                name: "",
+                email: "",
+                message: ""
+            };
+
+            // Helper function to trigger canvas-confetti sprinkler animation
+            function triggerSprinklers() {
+                // Side cannons confetti burst
+                const duration = 2.5 * 1000;
+                const animationEnd = Date.now() + duration;
+                const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                const interval = setInterval(function () {
+                    const timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+                    const particleCount = 50 * (timeLeft / duration);
+
+                    // Confetti from bottom corners matching our palette (#C7F36B, #FFFFFF, #F04438)
+                    confetti(Object.assign({}, defaults, {
+                        particleCount,
+                        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                        colors: ['#C7F36B', '#FFFFFF', '#F04438']
+                    }));
+                    confetti(Object.assign({}, defaults, {
+                        particleCount,
+                        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                        colors: ['#C7F36B', '#FFFFFF', '#F04438']
+                    }));
+                }, 250);
+            }
+
+            // Helper function to show floating toast notification
+            function showToast(message) {
+                const toast = document.getElementById("civixToast");
+                const msgEl = document.getElementById("toastMessage");
+                if (msgEl) msgEl.textContent = message;
+
+                toast.classList.add("show");
+
+                $timeout(function () {
+                    toast.classList.remove("show");
+                }, 4000);
+            }
+
+            $scope.submitForm = function (form) {
+
+                if (!form.$valid) {
+                    form.name.$setTouched();
+                    form.email.$setTouched();
+                    form.message.$setTouched();
+                    return;
+                }
+
+                $scope.isSubmitting = true;
+                $scope.submitted = false;
+                $scope.successMessage = "";
+                $scope.errorMessage = "";
+
+                // Simulated backend POST request (replace with $http.post('http://localhost:5000/api/contact', $scope.form))
+                $timeout(function () {
+                    $scope.isSubmitting = false;
+                    $scope.submitted = true;
+
+                    const successText = "Thank you, " + $scope.form.name + "! Your message has been received successfully.";
+                    $scope.successMessage = successText;
+
+                    // Trigger Sprinklers & Toast Notification
+                    triggerSprinklers();
+                    showToast(successText);
+
+                    // Reset form fields
+                    $scope.form = {
+                        name: "",
+                        email: "",
+                        message: ""
+                    };
+                    form.$setPristine();
+                    form.$setUntouched();
+                }, 1000);
+
+            };
+
+        });
+
+
+        // =========================================
+        // GSAP INITIALIZATION
+        // =========================================
+
+        gsap.registerPlugin(ScrollTrigger);
+
+
+        // Respect reduced motion preference
+        const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+
+        // =========================================
+        // HERO CINEMATIC ENTRANCE
+        // =========================================
+
+        if (!reduceMotion) {
+
+            const hero = gsap.timeline({
+                defaults: {
+                    ease: "power4.out"
+                }
+            });
+
+            hero
+                .from(".hero-label", {
+                    y: 25,
+                    opacity: 0,
+                    duration: .8
+                })
+
+                .from(".hero-line span", {
+                    yPercent: 120,
+                    opacity: 0,
+                    duration: 1.4,
+                    stagger: .2
+                }, "-=.3")
+
+                .from(".hero-description, .hero-cta", {
+                    y: 35,
+                    opacity: 0,
+                    duration: 1,
+                    stagger: .2
+                }, "-=.5")
+
+                .from(".hero-index", {
+                    y: 15,
+                    opacity: 0,
+                    duration: .8
+                }, "-=.4");
+
+        }
+
+
+        // =========================================
+        // GLOBAL SCROLL REVEALS
+        // =========================================
+
+        if (!reduceMotion) {
+
+            gsap.utils.toArray(".reveal").forEach((element) => {
+
+                gsap.fromTo(element,
+
+                    {
+                        y: 55,
+                        opacity: 0
+                    },
+
+                    {
+                        y: 0,
+                        opacity: 1,
+
+                        duration: 1.1,
+                        ease: "power3.out",
+
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 88%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+
+                );
+
+            });
+
+        }
+
+
+        // =========================================
+        // CINEMATIC TEAM SEQUENCE
+        // =========================================
+        window.addEventListener('load', function () {
+            if (!window.gsap || !window.ScrollTrigger || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            gsap.registerPlugin(ScrollTrigger);
+
+            const stage = document.querySelector('#civixTeamPin');
+            const members = gsap.utils.toArray('.civix-member');
+            const finale = document.querySelector('.civix-team-finale');
+            const progress = document.querySelector('#civixTeamProgress');
+            const counter = document.querySelector('#civixTeamCount');
+            if (!stage || !members.length) return;
+
+            const media = gsap.matchMedia();
+            media.add({
+                desktop: '(min-width: 761px)',
+                mobile: '(max-width: 760px)'
+            }, context => {
+                const mobile = context.conditions.mobile;
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: stage,
+                        start: 'top top',
+                        end: () => '+=' + (window.innerHeight * 7.2),
+                        pin: true,
+                        scrub: 0.8,
+                        anticipatePin: 1,
+                        invalidateOnRefresh: true,
+                        onUpdate: self => {
+                            progress.style.width = (self.progress * 100) + '%';
+                            const current = Math.min(5, Math.floor(self.progress * 5) + 1);
+                            counter.textContent = String(current).padStart(2, '0');
+                        }
+                    }
+                });
+
+                const sceneDuration = 2.55;
+
+                members.forEach((member, i) => {
+                    const at = i * sceneDuration;
+                    const photo = member.querySelector('.civix-member-photo');
+                    const img = member.querySelector('img');
+                    const copy = member.querySelector('.civix-member-copy');
+                    const disc = member.querySelector('.civix-member-disc');
+                    const word = member.querySelector('.civix-member-word');
+                    const name = member.querySelector('.civix-member-name');
+                    const role = member.querySelector('.civix-member-role');
+                    const bio = member.querySelector('.civix-member-bio');
+
+                    // Alternate the final portrait side: odd -> left, even -> right.
+                    const photoDirection = i % 2 === 0 ? -1 : 1;
+                    const copyDirection = -photoDirection;
+                    const travel = () => Math.min(window.innerWidth * (mobile ? 0.29 : 0.255), mobile ? 125 : 390);
+
+                    tl.set(member, { autoAlpha: 1, zIndex: i + 1 }, at);
+                    tl.set(photo, { x: 0, y: 0, scale: 1.03, rotation: 0 }, at);
+                    tl.set(img, { filter: 'grayscale(0%)', scale: 1.02 }, at);
+                    tl.set(disc, { scale: 0.48, opacity: 0 }, at);
+                    tl.set(copy, {
+                        autoAlpha: 0,
+                        x: () => copyDirection * (mobile ? 24 : 70),
+                        y: '-45%'
+                    }, at);
+
+                    // All three core movements begin together and finish together:
+                    // red disc expands, image becomes monochrome and travels, text enters.
+                    tl.to(disc, {
+                        scale: 1,
+                        opacity: 0.95,
+                        duration: 1.08,
+                        ease: 'power3.out'
+                    }, at + 0.22);
+
+                    tl.to(img, {
+                        filter: 'grayscale(100%) contrast(1.12)',
+                        scale: 1.1,
+                        duration: 1.08,
+                        ease: 'power2.inOut'
+                    }, at + 0.22);
+
+                    tl.to(photo, {
+                        x: () => photoDirection * travel(),
+                        scale: mobile ? 0.92 : 0.88,
+                        rotation: photoDirection * (mobile ? 0 : 3),
+                        duration: 1.08,
+                        ease: 'power3.inOut'
+                    }, at + 0.22);
+
+                    tl.to(copy, {
+                        autoAlpha: 1,
+                        x: 0,
+                        duration: 1.08,
+                        ease: 'power3.out'
+                    }, at + 0.22);
+
+                    // Text details animate inside the same reveal window.
+                    tl.fromTo(name,
+                        { y: 55, opacity: 0, skewY: 2 },
+                        { y: 0, opacity: 1, skewY: 0, duration: 0.72, ease: 'power4.out' },
+                        at + 0.45
+                    );
+
+                    tl.fromTo([role, bio],
+                        { y: 18, opacity: 0 },
+                        { y: 0, opacity: 1, stagger: 0.08, duration: 0.48, ease: 'power2.out' },
+                        at + 0.82
+                    );
+
+                    tl.to(word, { x: photoDirection * -35, duration: 1.25, ease: 'none' }, at + 0.2);
+
+                    // Hold completed composition, then cleanly hand off to the next member.
+                    if (i < members.length - 1) {
+                        tl.to(member, { autoAlpha: 0, duration: 0.22 }, at + 2.30);
+                    }
+                });
+
+                const endAt = members.length * sceneDuration;
+                tl.to(members[members.length - 1], { autoAlpha: 0, duration: 0.22 }, endAt - 0.22);
+                tl.set(finale, { autoAlpha: 1, zIndex: 20 }, endAt);
+                tl.fromTo(finale.querySelector('h2'),
+                    { scale: 0.72, opacity: 0, rotation: -3 },
+                    { scale: 1, opacity: 1, rotation: 0, duration: 0.7, ease: 'back.out(1.4)' },
+                    endAt + 0.08
+                );
+                tl.fromTo(finale.querySelector('p'),
+                    { y: 20, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.4 },
+                    endAt + 0.55
+                );
+
+                return () => {
+                    if (tl.scrollTrigger) tl.scrollTrigger.kill();
+                    tl.kill();
+                };
+            });
+
+            document.querySelectorAll('.civix-member-photo img').forEach(img => {
+                if (!img.complete) img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+            });
+            ScrollTrigger.refresh();
+        });
+
+        // =========================================
+        // NAVBAR SCROLL EFFECT
+        // =========================================
+
+        ScrollTrigger.create({
+
+            start: 80,
+
+            onUpdate: (self) => {
+
+                const nav = document.querySelector("#navbar");
+
+                if (self.scroll() > 80) {
+
+                    nav.style.background = "rgba(8,13,18,.92)";
+                    nav.style.backdropFilter = "blur(18px)";
+                    nav.style.paddingTop = "14px";
+                    nav.style.paddingBottom = "14px";
+
+                } else {
+
+                    nav.style.background = "transparent";
+                    nav.style.backdropFilter = "none";
+                    nav.style.paddingTop = "22px";
+                    nav.style.paddingBottom = "22px";
+
+                }
+
+            }
+
+        });
+
+
+        // =========================================
+        // FEATURE CARD MICRO-INTERACTIONS
+        // =========================================
+
+        if (window.matchMedia("(hover: hover)").matches) {
+
+            document.querySelectorAll(".feature-card").forEach(card => {
+
+                card.addEventListener("mouseenter", () => {
+
+                    gsap.to(card, {
+                        y: -9,
+                        duration: .4,
+                        ease: "power3.out"
+                    });
+
+                });
+
+                card.addEventListener("mouseleave", () => {
+
+                    gsap.to(card, {
+                        y: 0,
+                        duration: .4,
+                        ease: "power3.out"
+                    });
+
+                });
+
+            });
+
+        }
+
+
+        // =========================================
+        // REFRESH ON LOAD / RESIZE
+        // =========================================
+
+        window.addEventListener("load", () => {
+            ScrollTrigger.refresh();
+        });
+
+        window.addEventListener("resize", () => {
+            ScrollTrigger.refresh();
+        });
+
+    </script>
+
+</body>
+
+</html>
