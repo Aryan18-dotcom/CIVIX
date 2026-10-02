@@ -2071,7 +2071,9 @@
 
         const app = angular.module("civixApp", []);
 
-        app.controller("CivixController", function ($scope, $timeout) {
+        const BACKEND_API_URL = "https://ac-civix.vercel.app";
+
+        app.controller("CivixController", function ($scope, $timeout, $http) {
 
             $scope.menuOpen = false;
             $scope.submitted = false;
@@ -2132,6 +2134,7 @@
 
             $scope.submitForm = function (form) {
 
+                // Validate form
                 if (!form.$valid) {
                     form.name.$setTouched();
                     form.email.$setTouched();
@@ -2139,33 +2142,79 @@
                     return;
                 }
 
+                // Prevent duplicate submissions
+                if ($scope.isSubmitting) return;
+
                 $scope.isSubmitting = true;
                 $scope.submitted = false;
                 $scope.successMessage = "";
                 $scope.errorMessage = "";
 
-                // Simulated backend POST request (replace with $http.post('http://localhost:5000/api/contact', $scope.form))
-                $timeout(function () {
-                    $scope.isSubmitting = false;
-                    $scope.submitted = true;
+                // Prepare payload
+                const contactData = {
+                    name: $scope.form.name.trim(),
+                    email: $scope.form.email.trim().toLowerCase(),
+                    message: $scope.form.message.trim()
+                };
 
-                    const successText = "Thank you, " + $scope.form.name + "! Your message has been received successfully.";
-                    $scope.successMessage = successText;
+                // Real Backend API Request
+                $http.post(`${BACKEND_API_URL}/api/contact`, contactData)
 
-                    // Trigger Sprinklers & Toast Notification
-                    triggerSprinklers();
-                    showToast(successText);
+                    .then(function (response) {
 
-                    // Reset form fields
-                    $scope.form = {
-                        name: "",
-                        email: "",
-                        message: ""
-                    };
-                    form.$setPristine();
-                    form.$setUntouched();
-                }, 1000);
+                        if (response.data.success) {
 
+                            $scope.submitted = true;
+
+                            const successText =
+                                response.data.message ||
+                                "Thank you, " + contactData.name +
+                                "! Your message has been received successfully.";
+
+                            $scope.successMessage = successText;
+
+                            // Trigger Sprinklers & Toast Notification
+                            triggerSprinklers();
+                            showToast(successText);
+
+                            // Reset form fields
+                            $scope.form = {
+                                name: "",
+                                email: "",
+                                message: ""
+                            };
+
+                            form.$setPristine();
+                            form.$setUntouched();
+
+                        } else {
+
+                            $scope.errorMessage =
+                                response.data.message ||
+                                "Unable to send your message. Please try again.";
+
+                            showToast($scope.errorMessage, "error");
+                        }
+
+                    })
+
+                    .catch(function (error) {
+
+                        console.error("[CIVIX] Contact API Error:", error);
+
+                        $scope.errorMessage =
+                            error.data?.message ||
+                            "Something went wrong. Please try again later.";
+
+                        showToast($scope.errorMessage, "error");
+
+                    })
+
+                    .finally(function () {
+
+                        $scope.isSubmitting = false;
+
+                    });
             };
 
         });
