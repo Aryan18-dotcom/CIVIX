@@ -1,0 +1,37 @@
+
+# CIVIX
+
+> CIVIX — The City That Listens — is a civic technology platform for reporting and monitoring public infrastructure issues.
+
+## About
+
+CIVIX allows citizens to submit civic issues, follow their status, and view contribution information. Administrators can review reports and manage their status.
+
+## Public Website
+
+- [Homepage](https://your-domain.example/): Public project introduction.
+- [About](https://your-domain.example/#about): Project purpose and team.
+- [Contact](https://your-domain.example/#contact): Public contact information.
+
+## Documentation
+
+- [GitHub Repository](https://github.com/Aryan18-dotcom/CIVIX): Source code.
+- [README](https://github.com/Aryan18-dotcom/CIVIX/blob/main/README.md): Setup and project overview.
+- [Architecture](https://github.com/Aryan18-dotcom/CIVIX/blob/main/docs/ARCHITECTURE.md): System architecture.
+- [API Documentation](https://github.com/Aryan18-dotcom/CIVIX/blob/main/docs/API.md): Backend endpoint reference.
+- [Database Documentation](https://github.com/Aryan18-dotcom/CIVIX/blob/main/docs/DATABASE.md): Data models.
+- [Demo Guide](https://github.com/Aryan18-dotcom/CIVIX/blob/main/docs/DEMO_GUIDE.md): Demonstration workflow.
+
+## Important Context
+
+- CIVIX is an academic prototype.
+- Sample reports may be synthetic.
+- Do not describe synthetic records as verified municipal complaints.
+- Application credits are not verified carbon offsets.
+- Private user and administrator information is not public content.
+
+## Access
+
+Public pages may be crawled according to robots.txt.
+
+Authentication-protected routes and APIs require authorization.
