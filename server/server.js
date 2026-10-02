@@ -13,6 +13,7 @@ import LeaderboardRouter from './routes/LeaderboardRouter.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import AdminRouter from './routes/AdminRouter.js';
+import ContactRouter from './routes/ContactRoter.js';
 
 dotenv.config();
 
@@ -109,6 +110,9 @@ app.use('/api/leaderboard', LeaderboardRouter);
 
 // Admin Routes
 app.use('/api/admin', AdminRouter);
+
+// Conatact From Router
+app.use('/api/contact', ContactRouter);
 
 
 if (process.env.NODE_ENV !== 'production') {
