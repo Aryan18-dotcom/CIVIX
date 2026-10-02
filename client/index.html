@@ -939,20 +939,44 @@
    FOOTER
 ========================================= */
 
-        .footer {
-            background: var(--black);
+        .footer-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.58);
+            font-size: 13px;
+            transition: color 0.3s ease, padding 0.3s ease, border-color 0.3s ease;
         }
+
+        .footer-link i {
+            font-size: 15px;
+            color: rgba(199, 243, 107, 0.55);
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #C7F36B;
+            padding-left: 6px;
+            border-color: rgba(199, 243, 107, 0.35);
+        }
+
+        .footer-link:hover i {
+            color: #C7F36B;
+            transform: translate(2px, -2px);
+        }
+
+        @media (max-width: 640px) {
+            footer {
+                text-align: left;
+            }
+        }
+
 
         .footer-logo {
-            font-family: var(--font-display);
-            font-size: clamp(75px, 17vw, 220px);
-            line-height: .8;
-            font-weight: 700;
             letter-spacing: -.03em;
-        }
-
-        .footer-logo span {
-            color: var(--lime);
         }
 
         /* =========================================
@@ -1073,8 +1097,9 @@
                 <a href="#about">About</a>
                 <a href="#process">How it works</a>
                 <a href="#team">Our Team</a>
-                <a href="#contact" class="lime-button">
-                    Let's Connect <i class="ri-arrow-right-up-line"></i>
+                <a href="/auth.html" class="lime-button">
+                    Get Started
+                    <i class="ri-arrow-right-up-line"></i>
                 </a>
             </div>
 
@@ -1155,10 +1180,18 @@
                         And every street deserves attention.
                     </p>
 
-                    <a href="#about" class="lime-button hero-cta">
-                        Explore the Initiative
-                        <i class="ri-arrow-down-line"></i>
-                    </a>
+                    <div class="flex items-center justify-center gap-4">
+
+                        <a href="#about"
+                            class="bg-[#0e1316c4] text-white hover:bg-[#C7F36B] hover:text-black transition-colors duration-300 py-3 px-6 rounded-full ring-2 ring-[#c7f36b69] ring-inset shadow-lg text-sm  hero-cta">
+                            Explore the Initiative
+                            <i class="ri-arrow-down-line"></i>
+                        </a>
+                        <a href="/auth.html" class="lime-button hero-cta">
+                            Get Started
+                            <i class="ri-arrow-right-up-line"></i>
+                        </a>
+                    </div>
 
                 </div>
 
@@ -1617,10 +1650,9 @@
                     <div class="civix-member-word" aria-hidden="true">VISION</div>
                     <div class="civix-member-disc" id="civix-member-disc"></div>
                     <figure class="civix-member-photo">
-                        <img
-                            src="./public/team-members/aryan.jpeg"
-                            class="md:onject-top lg:object-center"
-                            alt="Aryan Chheda portrait" loading="eager" /></figure>
+                        <img src="./public/team-members/aryan.jpeg" class="md:onject-top lg:object-center"
+                            alt="Aryan Chheda portrait" loading="eager" />
+                    </figure>
                     <div class="civix-member-copy"><span class="civix-member-index">01 / THE
                             VISIONARY</span>
                         <h3 class="civix-member-name">ARYAN<span>CHHEDA</span></h3>
@@ -1634,30 +1666,12 @@
                     </div>
                 </article>
 
-                <article class="civix-member" aria-label="Shivam Prajapati, AI Developer">
-                    <div class="civix-member-word" aria-hidden="true">INTELLIGENCE</div>
-                    <div class="civix-member-disc"></div>
-                    <figure class="civix-member-photo"><img
-                            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
-                            alt="Shivam Prajapati portrait" loading="lazy"></figure>
-                    <div class="civix-member-copy"><span class="civix-member-index">02 / THE
-                            THINKER</span>
-                        <h3 class="civix-member-name">SHIVAM<span>PRAJAPATI</span></h3>
-                        <div class="civix-member-role">AI Developer</div>
-                        <p class="civix-member-bio">Exploring intelligent
-                            systems, data processing, and algorithmic
-                            thinking
-                            to make civic reporting more useful.</p>
-                    </div>
-                </article>
-
                 <article class="civix-member" aria-label="Abhay Pavar, Frontend Developer">
                     <div class="civix-member-word" aria-hidden="true">INTERACTION</div>
                     <div class="civix-member-disc"></div>
-                    <figure class="civix-member-photo"><img
-                            src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                    <figure class="civix-member-photo"><img src="./public/team-members/abhay.jpeg"
                             alt="Abhay Pavar portrait" loading="lazy"></figure>
-                    <div class="civix-member-copy"><span class="civix-member-index">03 / THE
+                    <div class="civix-member-copy"><span class="civix-member-index">02 / THE
                             BUILDER</span>
                         <h3 class="civix-member-name">ABHAY<span>PAVAR</span></h3>
                         <div class="civix-member-role">Frontend
@@ -1669,11 +1683,26 @@
                     </div>
                 </article>
 
+                <article class="civix-member" aria-label="Shivam Prajapati, AI Developer">
+                    <div class="civix-member-word" aria-hidden="true">INTELLIGENCE</div>
+                    <div class="civix-member-disc"></div>
+                    <figure class="civix-member-photo"><img src="./public/team-members/shivam.jpeg"
+                            alt="Shivam Prajapati portrait" loading="lazy"></figure>
+                    <div class="civix-member-copy"><span class="civix-member-index">03 / THE
+                            THINKER</span>
+                        <h3 class="civix-member-name">SHIVAM<span>PRAJAPATI</span></h3>
+                        <div class="civix-member-role">AI Developer</div>
+                        <p class="civix-member-bio">Exploring intelligent
+                            systems, data processing, and algorithmic
+                            thinking
+                            to make civic reporting more useful.</p>
+                    </div>
+                </article>
+
                 <article class="civix-member" aria-label="Yug Patel, UI UX Developer">
                     <div class="civix-member-word" aria-hidden="true">EXPERIENCE</div>
                     <div class="civix-member-disc"></div>
-                    <figure class="civix-member-photo"><img
-                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                    <figure class="civix-member-photo"><img src="./public/team-members/yug.jpeg"
                             alt="Yug Patel portrait" loading="lazy"></figure>
                     <div class="civix-member-copy"><span class="civix-member-index">04 / THE
                             DESIGNER</span>
@@ -1690,8 +1719,7 @@
                 <article class="civix-member" aria-label="Neel Patel, Supporting Contributor">
                     <div class="civix-member-word" aria-hidden="true">TEAMWORK</div>
                     <div class="civix-member-disc"></div>
-                    <figure class="civix-member-photo"><img
-                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&amp;fit=crop&amp;w=1100&amp;q=90"
+                    <figure class="civix-member-photo"><img src="./public/team-members/neel.jpeg"
                             alt="Neel Patel portrait" loading="lazy"></figure>
                     <div class="civix-member-copy"><span class="civix-member-index">05 / THE
                             SUPPORT</span>
@@ -1828,92 +1856,174 @@
 
         </section>
 
-<!-- =========================================
+        <!-- =========================================
      FOOTER
 ========================================= -->
 
-        <footer class="footer px-[7%] pt-20 pb-12">
 
-            <div class="max-w-[1500px] mx-auto">
+        <footer class="relative overflow-hidden bg-[#080D12] text-[#F4F5EF] px-[7%] pt-24 pb-8">
 
-                <div class="flex justify-between items-center mb-10">
+            <!-- Ambient background detail -->
+            <div
+                class="absolute -top-40 right-[-10%] w-[450px] h-[450px] rounded-full bg-[#C7F36B]/[0.035] blur-[120px] pointer-events-none">
+            </div>
 
-                    <p class="eyebrow text-white/40">
-                        THE CITY THAT LISTENS.
-                    </p>
+            <div class="relative max-w-[1500px] mx-auto">
 
-                    <a href="#home" class="text-lime text-sm">
-                        Back to top ↑
-                    </a>
-
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-end pt-6 border-t border-white/10">
-
-                    <!-- Left Column: CIVIX Branding -->
-                    <div>
-                        <a href="#home" class="footer-logo block mb-4 group text-white hover:text-[#c7f36b] transition-colors">
-                            CIVIX<span class="text-lime transition-colors">.</span>
-                        </a>
-                        <p class="text-white/40 text-xs tracking-wider uppercase">
-                            Digital Civic Intelligence Platform
+                <!-- Top label -->
+                <div class="flex items-center justify-between gap-4 mb-16">
+                    <div class="flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-[#C7F36B]"></span>
+                        <p class="text-[10px] md:text-xs tracking-[0.3em] uppercase text-white/40">
+                            The City That Listens
                         </p>
                     </div>
 
-                    <!-- Right Column: Minimalist Personal Branding & Links -->
-                    <div class="flex flex-col md:items-end justify-between h-full gap-6 md:gap-0">
-                        <div class="flex items-start md:items-end justify-center flex-col">
-                            <p class="font-display text-lg text-lime font-semibold text-white mb-1">Aryan Chheda</p>
-                            <p class="text-xs text-white/50 text-left md:text-right">
-                                Full-Stack Developer turning ideas into impactful web experiences.
-                            </p>
-                        </div>
-                        <div class="flex items-start md:items-end justify-center flex-col w-full">
-                            <blockquote class="text-md font-semibold italic text-neutral-200/60 mb-6 text-left md:text-right border-l-2 md:border-l-0 md:border-r-2 border-lime pl-3 md:pl-0 md:pr-3 py-0.5">
-                                "The best things in life aren't things."
+                    <a href="#home"
+                        class="group flex items-center gap-2 text-xs text-white/45 hover:text-[#C7F36B] transition-colors">
+                        Back to top
+                        <i class="ri-arrow-up-line transition-transform group-hover:-translate-y-1"></i>
+                    </a>
+                </div>
+
+                <!-- Main footer composition -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-8 pb-20">
+
+                    <!-- CIVIX Brand -->
+                    <div class="lg:col-span-4 flex flex-col items-start">
+
+                        <a href="#home"
+                            class="font-display footer-logo text-[4.5rem] md:text-[6rem] leading-none font-bold tracking-[-0.09em] text-white hover:text-[#C7F36B] transition-colors duration-500">
+                            CIVIX<span class="text-[#C7F36B]">.</span>
+                        </a>
+
+                        <p class="mt-5 max-w-[280px] text-sm leading-7 text-white/40">
+                            A civic intelligence platform built to turn voices into action and communities into change.
+                        </p>
+
+                        <a href="/auth.html"
+                            class="group mt-9 inline-flex items-center gap-5 rounded-full border border-[#C7F36B]/40 bg-[#C7F36B] px-6 py-3.5 text-sm font-semibold text-[#080D12] transition-all duration-300 hover:bg-white hover:border-white">
+
+                            Get Started
+
+                            <span
+                                class="flex h-7 w-7 items-center justify-center rounded-full bg-[#080D12]/10 transition-transform duration-300 group-hover:translate-x-1">
+                                <i class="ri-arrow-right-up-line text-lg"></i>
+                            </span>
+                        </a>
+
+                        <p class="mt-4 text-[10px] tracking-[0.16em] uppercase text-white/25">
+                            Your city. Your voice. Your impact.
+                        </p>
+                    </div>
+
+                    <!-- Quote / Signature -->
+                    <div class="lg:col-span-4 lg:col-start-6 flex flex-col justify-between">
+
+                        <div>
+                            <span class="font-display text-6xl leading-none text-[#C7F36B]/60">“</span>
+
+                            <blockquote
+                                class="font-display text-2xl md:text-3xl leading-[1.45] tracking-tight text-white/85 -mt-3">
+                                The best things in life aren't things.
                             </blockquote>
 
-                            <div class="flex flex-wrap gap-x-4 gap-y-2 md:justify-end text-xs text-white/70">
-                                <a href="https://ac-portfolio-phi.vercel.app" target="_blank"
-                                    class="hover:text-[#c7f36b] transition-colors">
-                                    Portfolio
-                                </a>
-                                <span class="text-white/20 hidden md:inline">•</span>
-                                <a href="https://in.linkedin.com/in/aryan-chheda-19ab54363" target="_blank"
-                                    class="hover:text-[#c7f36b] transition-colors">
-                                    LinkedIn
-                                </a>
-                                <span class="text-white/20 hidden md:inline">•</span>
-                                <a href="https://github.com/Aryan18-dotcom" target="_blank"
-                                    class="hover:text-[#c7f36b] transition-colors">
-                                    GitHub
-                                </a>
-                                <span class="text-white/20 hidden md:inline">•</span>
-                                <a href="mailto:aryanchheda22@gmail.com" class="hover:text-[#c7f36b] transition-colors">
-                                    Email
-                                </a>
+                            <div class="mt-6 flex items-center gap-3">
+                                <span class="h-px w-8 bg-[#C7F36B]"></span>
+                                <span class="text-[10px] uppercase tracking-[0.25em] text-white/35">
+                                    A thought to live by
+                                </span>
                             </div>
+                        </div>
+
+                        <div class="mt-12 lg:mt-0">
+                            <p class="text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">
+                                Designed & Developed by
+                            </p>
+
+                            <h3 class="font-display text-3xl md:text-4xl font-semibold tracking-tight text-[#C7F36B]">
+                                Aryan Chheda<span class="text-white/30">.</span>
+                            </h3>
+
+                            <p class="mt-2 text-sm text-white/45">
+                                Full-Stack Developer
+                            </p>
+
+                            <p class="mt-1 text-xs text-white/30 leading-6 max-w-[300px]">
+                                Turning ideas into impactful digital experiences.
+                            </p>
                         </div>
                     </div>
 
+                    <!-- Connect -->
+                    <div class="lg:col-span-2 lg:col-start-11 flex flex-col justify-between">
+
+                        <div>
+                            <p class="text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">
+                                Find me on
+                            </p>
+
+                            <div class="flex flex-col">
+
+                                <a href="https://ac-portfolio-phi.vercel.app" target="_blank" rel="noopener noreferrer"
+                                    class="footer-link">
+                                    <span>Portfolio</span>
+                                    <i class="ri-arrow-up-right-line"></i>
+                                </a>
+
+                                <a href="https://in.linkedin.com/in/aryan-chheda-19ab54363" target="_blank"
+                                    rel="noopener noreferrer" class="footer-link">
+                                    <span>LinkedIn</span>
+                                    <i class="ri-arrow-up-right-line"></i>
+                                </a>
+
+                                <a href="https://github.com/Aryan18-dotcom" target="_blank" rel="noopener noreferrer"
+                                    class="footer-link">
+                                    <span>GitHub</span>
+                                    <i class="ri-arrow-up-right-line"></i>
+                                </a>
+
+                                <a href="mailto:aryanchheda22@gmail.com" class="footer-link">
+                                    <span>Email</span>
+                                    <i class="ri-arrow-up-right-line"></i>
+                                </a>
+
+                            </div>
+                        </div>
+
+                        <div class="mt-12 lg:mt-0">
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-white/25 mb-3">
+                                Based in
+                            </p>
+                            <p class="text-sm text-white/55 flex items-center gap-2">
+                                <i class="ri-map-pin-2-line text-[#C7F36B]"></i>
+                                Ahmedabad, India
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Bottom signature strip -->
                 <div
-                    class="border-t border-white/10 mt-16 pt-7 flex flex-col md:flex-row justify-between gap-5 items-center">
+                    class="border-t border-white/[0.09] pt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 
-                    <p class="text-white/35 text-xs">
+                    <p class="text-[10px] tracking-[0.12em] text-white/30">
                         © 2026 CIVIX. All rights reserved.
                     </p>
 
-                    <p class="text-white/65 text-xs">
+                    <p class="text-[11px] tracking-wide text-white/45">
                         Creatively Created By
-                        <span class="text-lime font-semibold">AC.</span>
+                        <span class="font-display italic text-[#C7F36B] text-base ml-1">
+                            AC.
+                        </span>
                     </p>
 
+                    <p class="text-[10px] tracking-[0.12em] uppercase text-white/25">
+                        Built with purpose.
+                    </p>
                 </div>
 
             </div>
-
         </footer>
 
     </main>

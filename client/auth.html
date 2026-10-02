@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080D12">
+
+    <title>CIVIX — Account Access</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #080D12;
+            --panel: #101923;
+            --lime: #C7F36B;
+            --ivory: #F4F5EF;
+            --muted: #98A4AE;
+            --line: rgba(255, 255, 255, .1);
+            --danger: #FF7D82;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--ivory);
+            font-family: "DM Sans", sans-serif;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 580px;
+            height: 580px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(199, 243, 107, .1), transparent 68%);
+            top: -250px;
+            right: -130px;
+            pointer-events: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .shell {
+            position: relative;
+            z-index: 1;
+            width: min(100%, 1040px);
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, .38);
+        }
+
+        /* LEFT BRAND PANEL */
+
+        .visual {
+            position: relative;
+            padding: 42px 44px;
+            background: #0D151D;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .visual::before {
+            content: "";
+            position: absolute;
+            width: 390px;
+            height: 390px;
+            border: 1px solid rgba(199, 243, 107, .16);
+            border-radius: 50%;
+            right: -125px;
+            top: 100px;
+            box-shadow:
+                0 0 0 42px rgba(199, 243, 107, .025),
+                0 0 0 90px rgba(199, 243, 107, .018);
+        }
+
+        .visual::after {
+            content: "";
+            position: absolute;
+            width: 270px;
+            height: 270px;
+            border-radius: 50%;
+            background: var(--lime);
+            right: -82px;
+            top: 160px;
+        }
+
+        .brand {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font: 700 23px "Space Grotesk";
+            letter-spacing: -1.2px;
+        }
+
+        .brand-dot {
+            color: var(--lime);
+        }
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(199, 243, 107, .55);
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: var(--lime);
+        }
+
+        .visual-copy {
+            position: relative;
+            z-index: 2;
+            max-width: 420px;
+            margin-top: 130px;
+        }
+
+        .eyebrow {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--lime);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .visual h1 {
+            font: 700 clamp(42px, 5vw, 66px)/.98 "Space Grotesk";
+            letter-spacing: -3.8px;
+            margin: 18px 0;
+        }
+
+        .visual h1 span {
+            color: var(--lime);
+        }
+
+        .visual-copy p {
+            color: #A5B0B8;
+            line-height: 1.75;
+            font-size: 14px;
+            max-width: 360px;
+        }
+
+        .visual-foot {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #87939D;
+            font-size: 11px;
+        }
+
+        .pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--lime);
+            box-shadow: 0 0 14px var(--lime);
+        }
+
+        /* FORM PANEL */
+
+        .form-side {
+            padding: 50px clamp(25px, 5vw, 64px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-wrap {
+            width: 100%;
+            max-width: 390px;
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .form-head {
+            margin-bottom: 28px;
+        }
+
+        .form-head h2 {
+            font: 700 34px/1.1 "Space Grotesk";
+            letter-spacing: -1.4px;
+            margin: 0 0 9px;
+        }
+
+        .form-head p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .field {
+            margin: 17px 0;
+        }
+
+        .field label {
+            display: block;
+            color: #D6DCD9;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 9px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap>i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7F8B95;
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 51px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #0B131B;
+            color: var(--ivory);
+            outline: none;
+            padding: 0 44px 0 43px;
+            transition: .2s;
+        }
+
+        .input-wrap input::placeholder {
+            color: #65717C;
+        }
+
+        .input-wrap input:focus {
+            border-color: rgba(199, 243, 107, .75);
+            box-shadow: 0 0 0 3px rgba(199, 243, 107, .08);
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: none;
+            color: #82909B;
+            padding: 5px;
+        }
+
+        .row-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0 22px;
+            font-size: 12px;
+        }
+
+        .link {
+            border: 0;
+            background: none;
+            padding: 0;
+            color: var(--lime);
+            font-size: 12px;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .primary {
+            width: 100%;
+            height: 51px;
+            border: 0;
+            border-radius: 11px;
+            background: var(--lime);
+            color: #10160B;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: .18s;
+        }
+
+        .primary:hover {
+            filter: brightness(1.04);
+            transform: translateY(-1px);
+        }
+
+        .primary:disabled {
+            opacity: .58;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .switch {
+            margin: 23px 0 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .switch button {
+            margin-left: 4px;
+        }
+
+        /* MESSAGES */
+
+        .message {
+            display: none;
+            margin: 0 0 16px;
+            padding: 11px 13px;
+            border-radius: 9px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            color: #FFC1C4;
+            background: rgba(255, 125, 130, .09);
+            border: 1px solid rgba(255, 125, 130, .24);
+        }
+
+        .message.success {
+            color: #D9F9B1;
+            background: rgba(199, 243, 107, .08);
+            border: 1px solid rgba(199, 243, 107, .22);
+        }
+
+        /* SCREENS */
+
+        .screen {
+            display: none;
+            animation: enter .3s ease both;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes enter {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* OTP */
+
+        .otp-boxes {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin: 23px 0;
+        }
+
+        .otp-boxes input {
+            width: 100%;
+            min-width: 0;
+            height: 54px;
+            text-align: center;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: #0B131B;
+            color: var(--ivory);
+            font: 700 22px "Space Grotesk";
+            outline: none;
+        }
+
+        .otp-boxes input:focus {
+            border-color: var(--lime);
+            box-shadow: 0 0 0 3px rgba(199, 243, 107, .08);
+        }
+
+        .otp-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--muted);
+            font-size: 12px;
+            margin: 0 0 22px;
+        }
+
+        .otp-meta button:disabled {
+            color: #69747D;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .back-link:hover {
+            color: var(--lime);
+        }
+
+        .small-note {
+            font-size: 11px;
+            color: #74818C;
+            line-height: 1.6;
+            margin-top: 17px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(16, 22, 11, .25);
+            border-top-color: #10160B;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:760px) {
+            body {
+                padding: 12px;
+                align-items: start;
+            }
+
+            .shell {
+                grid-template-columns: 1fr;
+                min-height: 0;
+                border-radius: 18px;
+                margin: 10px 0;
+            }
+
+            .visual {
+                display: none;
+            }
+
+            .form-side {
+                padding: 30px 23px;
+                min-height: calc(100svh - 44px);
+            }
+
+            .mobile-brand {
+                display: flex;
+                margin-bottom: 38px;
+            }
+
+            .form-head h2 {
+                font-size: 31px;
+            }
+        }
+
+        /* VIEWPORT-FIT LAYOUT */
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            min-height: 100svh;
+            height: 100svh;
+            padding: clamp(10px, 2.5vh, 24px);
+            overflow: hidden;
+        }
+
+        .shell {
+            height: min(680px, calc(100svh - 2 * clamp(10px, 2.5vh, 24px)));
+            min-height: 0;
+            max-height: 100%;
+        }
+
+        .visual {
+            padding: clamp(24px, 4vh, 42px) clamp(24px, 3.5vw, 44px);
+        }
+
+        .visual-copy {
+            margin-top: 0;
+        }
+
+        .visual h1 {
+            font-size: clamp(38px, 4.5vw, 62px);
+        }
+
+        .form-side {
+            min-height: 0;
+            padding: clamp(20px, 4vh, 42px) clamp(24px, 4vw, 56px);
+        }
+
+        .form-head {
+            margin-bottom: clamp(14px, 2.4vh, 24px);
+        }
+
+        .form-head h2 {
+            font-size: clamp(28px, 2.7vw, 34px);
+        }
+
+        .field {
+            margin: clamp(10px, 1.8vh, 16px) 0;
+        }
+
+        .input-wrap input {
+            height: clamp(44px, 6.2vh, 51px);
+        }
+
+        .row-between {
+            margin-bottom: clamp(12px, 2vh, 20px);
+        }
+
+        .primary {
+            height: clamp(45px, 6.2vh, 51px);
+        }
+
+        .switch {
+            margin-top: clamp(13px, 2.2vh, 21px);
+        }
+
+        .back-link {
+            margin-bottom: clamp(12px, 2vh, 20px);
+        }
+
+        .otp-boxes {
+            margin: clamp(14px, 2.5vh, 23px) 0;
+        }
+
+        .otp-boxes input {
+            height: clamp(44px, 6.5vh, 54px);
+        }
+
+        .otp-meta {
+            margin-bottom: clamp(12px, 2vh, 20px);
+        }
+
+        .small-note {
+            margin-top: 10px;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 8px;
+                place-items: center;
+            }
+
+            .shell {
+                width: 100%;
+                height: calc(100svh - 16px);
+                margin: 0;
+                grid-template-columns: 1fr;
+                border-radius: 18px;
+            }
+
+            .visual {
+                display: none;
+            }
+
+            .form-side {
+                min-height: 0;
+                padding: 18px clamp(18px, 6vw, 28px);
+            }
+
+            .form-wrap {
+                max-width: 420px;
+            }
+
+            .mobile-brand {
+                display: flex;
+                margin-bottom: clamp(14px, 3vh, 26px);
+            }
+
+            .form-head {
+                margin-bottom: 14px;
+            }
+
+            .form-head h2 {
+                font-size: clamp(27px, 7vw, 32px);
+            }
+
+            .field {
+                margin: 10px 0;
+            }
+
+            .field label {
+                margin-bottom: 6px;
+            }
+
+            .row-between {
+                margin: 4px 0 14px;
+            }
+
+            .switch {
+                margin-top: 14px;
+            }
+
+            .back-link {
+                margin-bottom: 12px;
+            }
+
+            .otp-boxes {
+                gap: 6px;
+                margin: 15px 0;
+            }
+
+            .otp-boxes input {
+                height: 46px;
+            }
+
+            .otp-meta {
+                margin-bottom: 14px;
+            }
+        }
+
+        @media (max-height: 620px) {
+            .visual {
+                padding-top: 18px;
+                padding-bottom: 18px;
+            }
+
+            .visual h1 {
+                font-size: clamp(34px, 7vh, 48px);
+                margin: 10px 0;
+            }
+
+            .visual-copy p {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
+            .form-side {
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+
+            .mobile-brand {
+                margin-bottom: 10px;
+            }
+
+            .form-head {
+                margin-bottom: 10px;
+            }
+
+            .form-head h2 {
+                font-size: 26px;
+            }
+
+            .field {
+                margin: 8px 0;
+            }
+
+            .input-wrap input {
+                height: 42px;
+            }
+
+            .primary {
+                height: 43px;
+            }
+
+            .switch {
+                margin-top: 10px;
+            }
+
+            .back-link {
+                margin-bottom: 8px;
+            }
+
+            .otp-boxes {
+                margin: 10px 0;
+            }
+
+            .otp-boxes input {
+                height: 40px;
+            }
+
+            .otp-meta {
+                margin-bottom: 10px;
+            }
+
+            .small-note {
+                margin-top: 7px;
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="shell">
+
+        <!-- LEFT BRANDING -->
+        <aside class="visual">
+
+            <div class="brand">
+                <span class="brand-mark"><i class="ri-community-line"></i></span>
+                CIVIX<span class="brand-dot">.</span>
+            </div>
+
+            <div class="visual-copy">
+                <div class="eyebrow">The city that listens</div>
+
+                <h1>
+                    Small reports.<br>
+                    <span>Real change.</span>
+                </h1>
+
+                <p>
+                    Join your community to report local issues,
+                    follow progress, and help make neighborhoods
+                    safer, cleaner, and more responsive.
+                </p>
+            </div>
+
+            <div class="visual-foot">
+                <span class="pulse"></span>
+                A civic intelligence initiative
+            </div>
+
+        </aside>
+
+        <!-- AUTHENTICATION -->
+        <section class="form-side">
+
+            <div class="form-wrap">
+
+                <div class="brand mobile-brand">
+                    <span class="brand-mark"><i class="ri-community-line"></i></span>
+                    CIVIX<span class="brand-dot">.</span>
+                </div>
+
+                <!-- LOGIN -->
+                <section id="loginScreen" class="screen active">
+
+                    <div class="form-head">
+                        <div class="eyebrow">Welcome back</div>
+                        <h2>Sign in to CIVIX</h2>
+                        <p>Continue where your community work left off.</p>
+                    </div>
+
+                    <div id="loginMessage" class="message" role="alert"></div>
+
+                    <form id="loginForm">
+
+                        <div class="field">
+                            <label for="loginIdentity">Username or email</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-user-3-line"></i>
+                                <input id="loginIdentity" autocomplete="username" placeholder="Enter username or email"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="loginPassword">Password</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-lock-2-line"></i>
+
+                                <input id="loginPassword" type="password" autocomplete="current-password"
+                                    placeholder="Enter your password" required>
+
+                                <button class="toggle-pass" type="button" data-toggle="loginPassword"
+                                    aria-label="Show password">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row-between">
+                            <span></span>
+                            <button type="button" class="link" id="forgotLink">
+                                Forgot password?
+                            </button>
+                        </div>
+
+                        <button class="primary" id="loginButton" type="submit">
+                            Login <i class="ri-arrow-right-line"></i>
+                        </button>
+
+                    </form>
+
+                    <p class="switch">
+                        New to CIVIX?
+                        <button type="button" class="link" id="showSignup">
+                            Create account
+                        </button>
+                    </p>
+
+                </section>
+
+                <!-- SIGNUP -->
+                <section id="signupScreen" class="screen">
+
+                    <a href="#" class="back-link" data-screen="login">
+                        <i class="ri-arrow-left-line"></i> Back to login
+                    </a>
+
+                    <div class="form-head">
+                        <div class="eyebrow">Join the community</div>
+                        <h2>Create account</h2>
+                        <p>Set up your CIVIX account. We'll email you a verification code.</p>
+                    </div>
+
+                    <div id="signupMessage" class="message" role="alert"></div>
+
+                    <form id="signupForm">
+
+                        <div class="field">
+                            <label for="signupUsername">Username</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-user-3-line"></i>
+                                <input id="signupUsername" autocomplete="username" minlength="3"
+                                    placeholder="Choose a username" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="signupEmail">Email address</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-mail-line"></i>
+                                <input id="signupEmail" type="email" autocomplete="email" placeholder="you@example.com"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="signupPassword">Password</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-lock-2-line"></i>
+                                <input id="signupPassword" type="password" autocomplete="new-password" minlength="8"
+                                    placeholder="At least 8 characters" required>
+
+                                <button class="toggle-pass" type="button" data-toggle="signupPassword"
+                                    aria-label="Show password">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="primary" id="signupButton" type="submit">
+                            Create account <i class="ri-arrow-right-line"></i>
+                        </button>
+
+                    </form>
+
+                    <p class="switch">
+                        Already have an account?
+                        <button type="button" class="link" id="showLogin">
+                            Login
+                        </button>
+                    </p>
+
+                </section>
+
+                <!-- REGISTRATION OTP -->
+                <section id="otpScreen" class="screen">
+
+                    <a href="#" class="back-link" id="backToSignup">
+                        <i class="ri-arrow-left-line"></i> Back to signup
+                    </a>
+
+                    <div class="form-head">
+                        <div class="eyebrow">One last step</div>
+                        <h2>Verify your email</h2>
+                        <p>
+                            Enter the 6-digit code sent to
+                            <strong id="otpEmail" style="color:#F4F5EF"></strong>.
+                        </p>
+                    </div>
+
+                    <div id="otpMessage" class="message" role="alert"></div>
+
+                    <form id="otpForm">
+
+                        <div class="otp-boxes">
+                            <input inputmode="numeric" maxlength="1" aria-label="Digit 1" autocomplete="one-time-code"
+                                required>
+                            <input inputmode="numeric" maxlength="1" aria-label="Digit 2" required>
+                            <input inputmode="numeric" maxlength="1" aria-label="Digit 3" required>
+                            <input inputmode="numeric" maxlength="1" aria-label="Digit 4" required>
+                            <input inputmode="numeric" maxlength="1" aria-label="Digit 5" required>
+                            <input inputmode="numeric" maxlength="1" aria-label="Digit 6" required>
+                        </div>
+
+                        <div class="otp-meta">
+                            <span>Didn't receive the code?</span>
+                            <button type="button" class="link" id="resendButton" disabled>
+                                Resend in 40s
+                            </button>
+                        </div>
+
+                        <button class="primary" id="verifyButton" type="submit">
+                            Verify &amp; continue <i class="ri-arrow-right-line"></i>
+                        </button>
+
+                    </form>
+
+                    <p class="small-note">
+                        For your security, never share your verification code with anyone.
+                    </p>
+
+                </section>
+
+                <!-- FORGOT PASSWORD: REQUEST OTP -->
+                <section id="forgotScreen" class="screen">
+
+                    <a href="#" class="back-link" data-screen="login">
+                        <i class="ri-arrow-left-line"></i> Back to login
+                    </a>
+
+                    <div class="form-head">
+                        <div class="eyebrow">Account recovery</div>
+                        <h2>Forgot password?</h2>
+                        <p>Enter your account email to receive a password reset code.</p>
+                    </div>
+
+                    <div id="forgotMessage" class="message" role="alert"></div>
+
+                    <form id="forgotForm">
+
+                        <div class="field">
+                            <label for="forgotEmail">Email address</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-mail-line"></i>
+                                <input id="forgotEmail" type="email" autocomplete="email" placeholder="you@example.com"
+                                    required>
+                            </div>
+                        </div>
+
+                        <button class="primary" id="forgotButton" type="submit">
+                            Send reset code <i class="ri-arrow-right-line"></i>
+                        </button>
+
+                    </form>
+
+                </section>
+
+                <!-- RESET PASSWORD: VERIFY OTP + NEW PASSWORD -->
+                <section id="resetScreen" class="screen">
+
+                    <a href="#" class="back-link" id="backToForgot">
+                        <i class="ri-arrow-left-line"></i> Back
+                    </a>
+
+                    <div class="form-head">
+                        <div class="eyebrow">Secure account recovery</div>
+                        <h2>Reset password</h2>
+                        <p>
+                            Enter the 6-digit code sent to
+                            <strong id="resetEmailLabel" style="color:#F4F5EF"></strong>
+                            and create a new password.
+                        </p>
+                    </div>
+
+                    <div id="resetMessage" class="message" role="alert"></div>
+
+                    <form id="resetForm">
+
+                        <div class="field">
+                            <label for="resetOtp">Verification code</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-shield-keyhole-line"></i>
+                                <input id="resetOtp" type="text" inputmode="numeric" autocomplete="one-time-code"
+                                    maxlength="6" pattern="[0-9]{6}" placeholder="Enter 6-digit OTP" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="newPassword">New password</label>
+
+                            <div class="input-wrap">
+                                <i class="ri-lock-2-line"></i>
+                                <input id="newPassword" type="password" autocomplete="new-password" minlength="8"
+                                    placeholder="At least 8 characters" required>
+
+                                <button class="toggle-pass" type="button" data-toggle="newPassword"
+                                    aria-label="Show password">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="primary" id="resetButton" type="submit">
+                            Update password <i class="ri-check-line"></i>
+                        </button>
+
+                    </form>
+
+                    <p class="small-note">
+                        After updating your password, sign in using your new credentials.
+                    </p>
+
+                </section>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /*
+        =========================================================
+        CIVIX AUTHENTICATION
+        Login | Signup | Registration OTP | Password Recovery
+        =========================================================
+        */
+
+        const API_BASE = "http://localhost:3000";
+
+        const API = {
+            login: "/api/auth/login",
+
+            requestOtp: "/api/auth/register/request-otp",
+            verifyAndRegister: "/api/auth/register/verify",
+            resendOtp: "/api/auth/register/resend-otp",
+
+            forgotPasswordRequestOtp:
+                "/api/manage-account/forgot-password/request-otp",
+
+            forgotPasswordVerifyOtp:
+                "/api/manage-account/forgot-password/verify-otp",
+            currentUser: "/api/auth/current-user"
+        };
+
+        const DASHBOARD_URL = "/dashboard.html";
+        const ADMIN_DASHBOARD_URL = "/adminDashboard.html";
+
+        async function checkExistingSession() {
+            try {
+                const response = await fetch(
+                    API_BASE.replace(/\/$/, "") + API.currentUser,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Accept": "application/json"
+                        },
+                        credentials: "include" // Ensures session cookies are sent
+                    }
+                );
+                if (response.ok) {
+                    const data = await response.json();
+                    if(data.user || data.success === true ) {
+                        if(data.isAdmin){
+                            window.location.assign(ADMIN_DASHBOARD_URL);
+                        } else {
+                        // Session is valid, redirect away from auth page
+                            window.location.assign(DASHBOARD_URL);
+                        }
+                    }
+                }
+            } catch (error) {
+                // Silent catch: network error or unauthenticated, stay on auth page
+                console.log("No active session found.");
+            }
+        }
+
+        // Run check immediately when the script loads
+        checkExistingSession();
+
+        let pendingRegistrationData = {};
+        let pendingResetEmail = "";
+
+        let resendTimer = null;
+        let resendRemaining = 0;
+
+        const screens = [
+            "loginScreen",
+            "signupScreen",
+            "otpScreen",
+            "forgotScreen",
+            "resetScreen"
+        ];
+
+        /* =====================================================
+           SCREEN MANAGEMENT
+        ===================================================== */
+
+        function showScreen(id) {
+            screens.forEach(screen => {
+                document.getElementById(screen)
+                    .classList.toggle("active", screen === id);
+            });
+
+            clearMessages();
+        }
+
+        function showMessage(id, text, type = "error") {
+            const element = document.getElementById(id);
+
+            element.textContent = text || "Something went wrong.";
+            element.className = "message show " + type;
+        }
+
+        function clearMessage(id) {
+            const element = document.getElementById(id);
+
+            if (!element) return;
+
+            element.textContent = "";
+            element.className = "message";
+        }
+
+        function clearMessages() {
+            [
+                "loginMessage",
+                "signupMessage",
+                "otpMessage",
+                "forgotMessage",
+                "resetMessage"
+            ].forEach(clearMessage);
+        }
+
+        /* =====================================================
+           API REQUEST HANDLER
+        ===================================================== */
+
+        async function post(path, payload) {
+            let response;
+
+            try {
+                response = await fetch(
+                    API_BASE.replace(/\/$/, "") + path,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        credentials: "include",
+                        body: JSON.stringify(payload)
+                    }
+                );
+            } catch (error) {
+                throw new Error(
+                    "Cannot reach the server. Check your connection or API address."
+                );
+            }
+
+            const raw = await response.text();
+
+            let data = {};
+
+            try {
+                data = raw ? JSON.parse(raw) : {};
+            } catch {
+                data = {
+                    message: raw || "Unreadable server response."
+                };
+            }
+
+            if (!response.ok || data.success === false) {
+                throw new Error(
+                    data.message ||
+                    data.error ||
+                    `Request failed (${response.status}).`
+                );
+            }
+
+            return data;
+        }
+
+        /* =====================================================
+           BUTTON LOADING
+        ===================================================== */
+
+        function loading(button, isLoading, originalLabel) {
+            button.disabled = isLoading;
+
+            button.innerHTML = isLoading
+                ? '<span class="spinner"></span> Please wait...'
+                : originalLabel;
+        }
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        document.getElementById("showSignup").onclick = () => {
+            showScreen("signupScreen");
+        };
+
+        document.getElementById("showLogin").onclick = () => {
+            showScreen("loginScreen");
+        };
+
+        document.getElementById("forgotLink").onclick = () => {
+            const value = document.getElementById("loginIdentity").value.trim();
+
+            document.getElementById("forgotEmail").value =
+                value.includes("@") ? value : "";
+
+            showScreen("forgotScreen");
+        };
+
+        document.getElementById("backToSignup").onclick = event => {
+            event.preventDefault();
+            showScreen("signupScreen");
+        };
+
+        document.getElementById("backToForgot").onclick = event => {
+            event.preventDefault();
+            showScreen("forgotScreen");
+        };
+
+        document.querySelectorAll("[data-screen]").forEach(link => {
+            link.onclick = event => {
+                event.preventDefault();
+                showScreen(link.dataset.screen + "Screen");
+            };
+        });
+
+        /* =====================================================
+           PASSWORD VISIBILITY
+        ===================================================== */
+
+        document.querySelectorAll("[data-toggle]").forEach(button => {
+            button.onclick = () => {
+                const input = document.getElementById(button.dataset.toggle);
+
+                input.type = input.type === "password"
+                    ? "text"
+                    : "password";
+
+                button.innerHTML = input.type === "password"
+                    ? '<i class="ri-eye-line"></i>'
+                    : '<i class="ri-eye-off-line"></i>';
+            };
+        });
+
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
+        document.getElementById("loginForm").onsubmit = async event => {
+            event.preventDefault();
+
+            clearMessage("loginMessage");
+
+            const button = document.getElementById("loginButton");
+
+            const originalLabel =
+                'Login <i class="ri-arrow-right-line"></i>';
+
+            loading(button, true, originalLabel);
+
+            try {
+                const data = await post(API.login, {
+                    userId: document.getElementById("loginIdentity").value.trim(),
+                    password: document.getElementById("loginPassword").value
+                });
+
+                if(data.user || data.success === true ) {
+                    if(data.isAdmin){
+                        window.location.assign(ADMIN_DASHBOARD_URL);
+                    } else {
+                        // Session is valid, redirect away from auth page
+                        window.location.assign(DASHBOARD_URL);
+                    }
+                }
+
+            } catch (error) {
+                showMessage("loginMessage", error.message);
+
+            } finally {
+                loading(button, false, originalLabel);
+            }
+        };
+
+        /* =====================================================
+           SIGNUP — REQUEST REGISTRATION OTP
+        ===================================================== */
+
+        document.getElementById("signupForm").onsubmit = async event => {
+            event.preventDefault();
+
+            clearMessage("signupMessage");
+
+            const button = document.getElementById("signupButton");
+
+            const originalLabel =
+                'Create account <i class="ri-arrow-right-line"></i>';
+
+            loading(button, true, originalLabel);
+
+            try {
+                const username =
+                    document.getElementById("signupUsername").value.trim();
+
+                const email =
+                    document.getElementById("signupEmail").value.trim().toLowerCase();
+
+                const password =
+                    document.getElementById("signupPassword").value;
+
+                pendingRegistrationData = {
+                    username,
+                    email,
+                    password
+                };
+
+                await post(API.requestOtp, {
+                    username,
+                    email
+                });
+
+                document.getElementById("otpEmail").textContent = email;
+                document.getElementById("otpForm").reset();
+
+                showScreen("otpScreen");
+                startCountdown(40);
+
+                document.querySelector(".otp-boxes input").focus();
+
+            } catch (error) {
+                showMessage("signupMessage", error.message);
+
+            } finally {
+                loading(button, false, originalLabel);
+            }
+        };
+
+        /* =====================================================
+           REGISTRATION OTP — VERIFY AND REGISTER
+        ===================================================== */
+
+        document.getElementById("otpForm").onsubmit = async event => {
+            event.preventDefault();
+
+            clearMessage("otpMessage");
+
+            const code = [...document.querySelectorAll(".otp-boxes input")]
+                .map(input => input.value)
+                .join("");
+
+            if (!/^\d{6}$/.test(code)) {
+                showMessage(
+                    "otpMessage",
+                    "Enter the complete 6-digit code."
+                );
+                return;
+            }
+
+            const button = document.getElementById("verifyButton");
+
+            const originalLabel =
+                'Verify &amp; continue <i class="ri-arrow-right-line"></i>';
+
+            loading(button, true, originalLabel);
+
+            try {
+                const data = await post(API.verifyAndRegister, {
+                    username: pendingRegistrationData.username,
+                    email: pendingRegistrationData.email,
+                    password: pendingRegistrationData.password,
+                    otp: code
+                });
+
+                window.location.assign(
+                    data.redirect_url || DASHBOARD_URL
+                );
+
+            } catch (error) {
+                showMessage("otpMessage", error.message);
+
+            } finally {
+                loading(button, false, originalLabel);
+            }
+        };
+
+        /* =====================================================
+           REGISTRATION OTP RESEND COUNTDOWN
+        ===================================================== */
+
+        function startCountdown(seconds) {
+            clearInterval(resendTimer);
+
+            resendRemaining = seconds;
+
+            const button = document.getElementById("resendButton");
+
+            button.disabled = true;
+
+            const tick = () => {
+                button.textContent = resendRemaining > 0
+                    ? `Resend in ${resendRemaining}s`
+                    : "Resend OTP";
+
+                button.disabled = resendRemaining > 0;
+
+                if (resendRemaining <= 0) {
+                    clearInterval(resendTimer);
+                    resendTimer = null;
+                } else {
+                    resendRemaining--;
+                }
+            };
+
+            tick();
+
+            resendTimer = setInterval(tick, 1000);
+        }
+
+        /* =====================================================
+           RESEND REGISTRATION OTP
+        ===================================================== */
+
+        document.getElementById("resendButton").onclick = async () => {
+            const button = document.getElementById("resendButton");
+
+            if (button.disabled || resendRemaining > 0) {
+                return;
+            }
+
+            clearMessage("otpMessage");
+
+            button.disabled = true;
+            button.textContent = "Sending...";
+
+            try {
+                await post(API.resendOtp, {
+                    email: pendingRegistrationData.email
+                });
+
+                showMessage(
+                    "otpMessage",
+                    "A fresh OTP has been sent to your email.",
+                    "success"
+                );
+
+                startCountdown(40);
+
+            } catch (error) {
+                showMessage("otpMessage", error.message);
+
+                button.disabled = false;
+                button.textContent = "Resend OTP";
+            }
+        };
+
+        /* =====================================================
+           FORGOT PASSWORD — REQUEST RESET OTP
+           POST /forgot-password/request-otp
+           Body: { email }
+        ===================================================== */
+
+        document.getElementById("forgotForm").onsubmit = async event => {
+            event.preventDefault();
+
+            clearMessage("forgotMessage");
+
+            const button = document.getElementById("forgotButton");
+
+            const originalLabel =
+                'Send reset code <i class="ri-arrow-right-line"></i>';
+
+            const email = document
+                .getElementById("forgotEmail")
+                .value
+                .trim()
+                .toLowerCase();
+
+            loading(button, true, originalLabel);
+
+            try {
+                const data = await post(
+                    API.forgotPasswordRequestOtp,
+                    { email }
+                );
+
+                pendingResetEmail = email;
+
+                document.getElementById("resetEmailLabel").textContent = email;
+
+                document.getElementById("resetForm").reset();
+
+                showScreen("resetScreen");
+
+                showMessage(
+                    "resetMessage",
+                    data.message ||
+                    "If an account with that email exists, a password reset code has been sent.",
+                    "success"
+                );
+
+                document.getElementById("resetOtp").focus();
+
+            } catch (error) {
+                showMessage("forgotMessage", error.message);
+
+            } finally {
+                loading(button, false, originalLabel);
+            }
+        };
+
+        /* =====================================================
+           RESET PASSWORD — VERIFY OTP AND UPDATE PASSWORD
+           POST /forgot-password/verify-otp
+           Body: { email, otp, newPassword }
+        ===================================================== */
+
+        document.getElementById("resetForm").onsubmit = async event => {
+            event.preventDefault();
+
+            clearMessage("resetMessage");
+
+            const otp = document
+                .getElementById("resetOtp")
+                .value
+                .trim();
+
+            const newPassword = document
+                .getElementById("newPassword")
+                .value;
+
+            if (!/^\d{6}$/.test(otp)) {
+                showMessage(
+                    "resetMessage",
+                    "Enter the complete 6-digit verification code."
+                );
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showMessage(
+                    "resetMessage",
+                    "Password must be at least 8 characters long."
+                );
+                return;
+            }
+
+            if (!pendingResetEmail) {
+                showMessage(
+                    "resetMessage",
+                    "Recovery session is missing. Please request a new reset code."
+                );
+                return;
+            }
+
+            const button = document.getElementById("resetButton");
+
+            const originalLabel =
+                'Update password <i class="ri-check-line"></i>';
+
+            loading(button, true, originalLabel);
+
+            try {
+                const data = await post(
+                    API.forgotPasswordVerifyOtp,
+                    {
+                        email: pendingResetEmail,
+                        otp,
+                        newPassword
+                    }
+                );
+
+                const successMessage =
+                    data.message ||
+                    "Password reset successful. You can now log in with your new password.";
+
+                document.getElementById("loginIdentity").value =
+                    pendingResetEmail;
+
+                document.getElementById("loginPassword").value = "";
+
+                pendingResetEmail = "";
+
+                showScreen("loginScreen");
+
+                showMessage(
+                    "loginMessage",
+                    successMessage,
+                    "success"
+                );
+
+            } catch (error) {
+                showMessage("resetMessage", error.message);
+
+            } finally {
+                loading(button, false, originalLabel);
+            }
+        };
+
+        /* =====================================================
+           OTP INPUT UX — REGISTRATION OTP BOXES
+        ===================================================== */
+
+        const otpInputs = [
+            ...document.querySelectorAll("#otpForm .otp-boxes input")
+        ];
+
+        otpInputs.forEach((input, index) => {
+
+            input.addEventListener("input", () => {
+                input.value = input.value.replace(/\D/g, "").slice(-1);
+
+                if (input.value && index < 5) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener("keydown", event => {
+
+                if (
+                    event.key === "Backspace" &&
+                    !input.value &&
+                    index > 0
+                ) {
+                    otpInputs[index - 1].focus();
+                }
+
+                if (event.key === "ArrowLeft" && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+
+                if (event.key === "ArrowRight" && index < 5) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener("paste", event => {
+
+                const pasted = (
+                    event.clipboardData || window.clipboardData
+                )
+                    .getData("text")
+                    .replace(/\D/g, "")
+                    .slice(0, 6);
+
+                if (!pasted) return;
+
+                event.preventDefault();
+
+                pasted.split("").forEach((digit, i) => {
+                    if (otpInputs[i]) {
+                        otpInputs[i].value = digit;
+                    }
+                });
+
+                otpInputs[Math.min(pasted.length, 5)].focus();
+            });
+        });
+
+        /* =====================================================
+           RESET OTP INPUT — NUMERIC ONLY
+        ===================================================== */
+
+        document.getElementById("resetOtp").addEventListener("input", event => {
+            event.target.value = event.target.value
+                .replace(/\D/g, "")
+                .slice(0, 6);
+        });
+
+    </script>
+
+</body>
+
+</html>

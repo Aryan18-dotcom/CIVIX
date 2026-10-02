@@ -1,41 +1,121 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './config/DB.js';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import AuthRouter from './routes/AuthRouter.js';
+import ManageAccountRouter from './routes/ManageAccountRoutes.js';
+import DashboardRouter from './routes/DashboardRouter.js';
+import ReportRouter from './routes/ReportRouter.js';
+import CarbonRouter from './routes/CarbonRouter.js';
+import LeaderboardRouter from './routes/LeaderboardRouter.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import AdminRouter from './routes/AdminRouter.js';
 
+dotenv.config();
+
+const isProduction = process.env.NODE_ENV === "production";
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// 1. Database Connection
+// Ensure your connectDB logic checks for existing connections
+connectDB();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, '../client')));
+
+// 2. Security Headers for Production
+if (isProduction) {
+    app.set('trust proxy', 1); // Required for Vercel/proxies to pass cookies
+}
+
+// 3. CORS Configuration
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5500",
+    "http://localhost:3000"
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || !isProduction) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+}));
+
 app.use(express.json());
 
-// POST Route for Contact Form
-app.post('/api/contact', (req, res) => {
-    const { name, email, message } = req.path ? req.body : req.body;
+// 4. Session & Cookie Logic
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    name: 'civix_session',
+    cookie: { 
+        // Secure is TRUE in production (requires HTTPS)
+        secure: isProduction, 
+        httpOnly: true, 
+        maxAge: 1000 * 60 * 60 * 24 * 7, 
+        // SameSite is 'none' for cross-domain cookies in prod, 'lax' for local dev
+        sameSite: isProduction ? "none" : "lax" 
+    },
+    store: MongoStore.create({
+        mongoUrl: process.env.Mongodb_URI,
+        collectionName: 'sessions',
+        ttl: 60 * 60 * 24 * 7 // 7 days
+    })
+}));
 
-    // Basic validation check
-    if (!name || !email || !message) {
-        return res.status(400).json({ 
-            success: false, 
-            message: "Please fill out all required fields." 
-        });
-    }
-
-    // Log the incoming submission to the terminal
-    console.log("New Contact Form Submission Received:");
-    console.log(`- Name: ${name}`);
-    console.log(`- Email: ${email}`);
-    console.log(`- Message: ${message}`);
-
-    // Simulate successful processing / database save
-    setTimeout(() => {
-        return res.status(200).json({
-            success: true,
-            message: `Thank you, ${name}! Your message has been received successfully.`
-        });
-    }, 800); // 800ms artificial delay to test loading state
+// 5. Routes
+app.get('/', (req, res) => {
+    res.status(200).json({ 
+        message: 'Server is Live!', 
+        env: process.env.NODE_ENV,
+        time: new Date().toISOString()
+    });
+});
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'OK',
+        time: new Date().toISOString(),
+        message: 'Server is healthy and running smoothly.'
+    });
 });
 
-// Start Server
-app.listen(PORT, () => {
-    console.log(`CIVIX Backend server running on http://localhost:${PORT}`);
-});
+// 6. Services Routes
+app.use('/api/auth', AuthRouter);
+app.use('/api/manage-account', ManageAccountRouter);
+// CIVIX Dashboard APIs
+app.use('/api/dashboard', DashboardRouter);
+
+// Civic Reports
+app.use('/api/reports', ReportRouter);
+
+// Carbon Credits
+app.use('/api/carbon-credits', CarbonRouter);
+
+// Leaderboard
+app.use('/api/leaderboard', LeaderboardRouter);
+
+// Admin Routes
+app.use('/api/admin', AdminRouter);
+
+
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+        console.log(`Server running in ${process.env.NODE_ENV} mode at http://localhost:${port}`);
+    });
+}
+
+export default app;
