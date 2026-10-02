@@ -2,18 +2,50 @@
 <html lang="en" ng-app="civixApp">
 
 <head>
+    <!-- Essential Metadata -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>CIVIX — The City That Listens</title>
 
-    <meta name="theme-color" content="#080D12">
-
     <meta name="description"
-        content="CIVIX is a digital civic intelligence platform transforming public complaints into structured, trackable civic action.">
+        content="CIVIX is a digital civic intelligence platform transforming public complaints into structured, trackable civic action. Report civic issues, track resolutions, earn carbon credits, and help build a better city.">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <meta name="keywords"
+        content="CIVIX, civic technology, civic intelligence, smart city, civic issue reporting, public complaints, urban development, sustainable city, carbon credits">
+
+    <meta name="author" content="CIVIX Development Team">
+    <meta name="application-name" content="CIVIX">
+    <meta name="robots" content="index, follow">
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#080D12">
+    <meta name="color-scheme" content="dark">
+
+    <!-- Favicon / Logo -->
+    <link rel="icon" type="image/png" href="./public/logo_civix.png">
+    <link rel="apple-touch-icon" href="./public/civix_banner.jpg">
+
+    <!-- Open Graph / Social Media Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="CIVIX">
+    <meta property="og:title" content="CIVIX — The City That Listens">
+    <meta property="og:description"
+        content="A city that listens is a city that evolves. Report civic issues, track real change, and help build a better tomorrow with CIVIX.">
+
+    <meta property="og:image" content="./public/civix_banner.png">
+    <meta property="og:image:alt" content="CIVIX — The City That Listens">
+    <meta property="og:image:type" content="image/png">
+
+    <!-- Twitter / X Preview -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CIVIX — The City That Listens">
+    <meta name="twitter:description"
+        content="See it. Report it. Create change. Join CIVIX in building smarter, cleaner, and more responsive cities.">
+    <meta name="twitter:image" content="./public/civix_banner.png">
+
+    <!-- Banner Preload -->
+    <link rel="preload" as="image" href="./public/civix_banner.png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +54,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <!-- Remix Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
@@ -33,7 +68,7 @@
     <!-- AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 
-    <!-- Canvas Confetti for Sprinklers / Success Celebration -->
+    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <style>
