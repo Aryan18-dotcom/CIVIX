@@ -25,27 +25,333 @@ export const UpdateUserProfile = async (req, res) => {
 };
 
 export const sendOtpEmail = async (email, otp) => {
+
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: { 
-            user: process.env.EMAIL_USER, 
-            pass: process.env.EMAIL_PASS 
+        service: "gmail",
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         }
     });
 
-    await transporter.sendMail({
-        from: '"Thumlify AI" <auth@thumlify.ai>',
+    const expiryMinutes = 5;
+
+    const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>CIVIX — Security Verification</title>
+    </head>
+
+    <body style="
+        margin:0;
+        padding:0;
+        background-color:#080D12;
+        font-family:Arial,Helvetica,sans-serif;
+        color:#F4F5EF;
+    ">
+
+        <table width="100%" cellpadding="0" cellspacing="0"
+            style="background-color:#080D12;padding:35px 12px;">
+
+            <tr>
+                <td align="center">
+
+                    <table width="100%" cellpadding="0" cellspacing="0"
+                        style="
+                            max-width:520px;
+                            background-color:#101827;
+                            border:1px solid #26332D;
+                            border-radius:16px;
+                            overflow:hidden;
+                        ">
+
+                        <!-- BRAND HEADER -->
+                        <tr>
+                            <td align="center" style="padding:32px 20px 26px;">
+
+                                <div style="
+                                    font-size:35px;
+                                    font-weight:800;
+                                    letter-spacing:7px;
+                                    color:#F4F5EF;
+                                ">
+                                    CIVI<span style="color:#C7F36B;">X</span>
+                                </div>
+
+                                <p style="
+                                    margin:9px 0 0;
+                                    font-size:10px;
+                                    letter-spacing:4px;
+                                    color:#A0A8A5;
+                                ">
+                                    THE CITY THAT LISTENS
+                                </p>
+
+                            </td>
+                        </tr>
+
+                        <!-- LIME DIVIDER -->
+                        <tr>
+                            <td style="
+                                height:2px;
+                                background-color:#C7F36B;
+                                font-size:0;
+                            ">&nbsp;</td>
+                        </tr>
+
+                        <!-- MAIN CONTENT -->
+                        <tr>
+                            <td style="padding:35px 28px 30px;">
+
+                                <!-- SECURITY ICON -->
+                                <div style="
+                                    width:52px;
+                                    height:52px;
+                                    line-height:52px;
+                                    text-align:center;
+                                    border-radius:14px;
+                                    background-color:#26351F;
+                                    color:#C7F36B;
+                                    font-size:25px;
+                                    margin-bottom:22px;
+                                ">
+                                    &#128274;
+                                </div>
+
+                                <h1 style="
+                                    margin:0 0 12px;
+                                    font-size:27px;
+                                    line-height:1.3;
+                                    color:#F4F5EF;
+                                ">
+                                    Verify your identity.
+                                </h1>
+
+                                <p style="
+                                    margin:0;
+                                    font-size:15px;
+                                    line-height:1.8;
+                                    color:#A0A8A5;
+                                ">
+                                    We received a request to verify your
+                                    CIVIX account. Use the secure
+                                    verification code below to continue.
+                                </p>
+
+                                <!-- OTP CARD -->
+                                <table width="100%" cellpadding="0" cellspacing="0"
+                                    style="
+                                        margin-top:28px;
+                                        background-color:#080D12;
+                                        border:1px solid #344331;
+                                        border-radius:12px;
+                                    ">
+
+                                    <tr>
+                                        <td align="center" style="padding:25px 15px;">
+
+                                            <p style="
+                                                margin:0 0 15px;
+                                                font-size:11px;
+                                                font-weight:bold;
+                                                letter-spacing:3px;
+                                                color:#A0A8A5;
+                                            ">
+                                                YOUR VERIFICATION CODE
+                                            </p>
+
+                                            <div style="
+                                                display:inline-block;
+                                                padding:16px 22px;
+                                                background-color:#17221B;
+                                                border:1px solid #425533;
+                                                border-radius:9px;
+                                                font-family:monospace;
+                                                font-size:36px;
+                                                font-weight:bold;
+                                                letter-spacing:9px;
+                                                color:#C7F36B;
+                                                user-select:all;
+                                                -webkit-user-select:all;
+                                            ">
+                                                ${String(otp).replace(/[&<>"']/g, "")}
+                                            </div>
+
+                                            <p style="
+                                                margin:18px 0 0;
+                                                font-size:12px;
+                                                color:#A0A8A5;
+                                            ">
+                                                Select and copy your code to continue.
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- EXPIRY INFO -->
+                                <table width="100%" cellpadding="0" cellspacing="0"
+                                    style="
+                                        margin-top:22px;
+                                        background-color:#25251B;
+                                        border:1px solid #4B472A;
+                                        border-radius:9px;
+                                    ">
+
+                                    <tr>
+                                        <td style="padding:17px;">
+
+                                            <p style="
+                                                margin:0;
+                                                font-size:14px;
+                                                font-weight:bold;
+                                                color:#C7F36B;
+                                            ">
+                                                &#9201; Expires in ${expiryMinutes} minutes
+                                            </p>
+
+                                            <p style="
+                                                margin:8px 0 0;
+                                                font-size:13px;
+                                                line-height:1.7;
+                                                color:#C7C6B5;
+                                            ">
+                                                This OTP is valid for only
+                                                ${expiryMinutes} minutes from
+                                                the time it was generated.
+                                                After that, you will need
+                                                to request a new code.
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- SECURITY NOTICE -->
+                                <h3 style="
+                                    margin:28px 0 10px;
+                                    font-size:14px;
+                                    color:#F4F5EF;
+                                ">
+                                    Important security notice
+                                </h3>
+
+                                <ul style="
+                                    margin:0;
+                                    padding-left:20px;
+                                    font-size:13px;
+                                    line-height:2;
+                                    color:#A0A8A5;
+                                ">
+                                    <li>Never share this code with anyone.</li>
+                                    <li>CIVIX will never ask you to disclose your OTP.</li>
+                                    <li>If you did not request this code, simply ignore this email.</li>
+                                </ul>
+
+                                <p style="
+                                    margin:28px 0 0;
+                                    font-size:14px;
+                                    line-height:1.8;
+                                    color:#A0A8A5;
+                                ">
+                                    Keeping your account secure helps us
+                                    build a safer and more connected city.
+                                </p>
+
+                                <p style="
+                                    margin:20px 0 0;
+                                    font-size:15px;
+                                    font-weight:bold;
+                                    color:#C7F36B;
+                                ">
+                                    — Team CIVIX
+                                </p>
+
+                            </td>
+                        </tr>
+
+                        <!-- FOOTER -->
+                        <tr>
+                            <td align="center" style="
+                                padding:25px 20px;
+                                background-color:#080D12;
+                                border-top:1px solid #26332D;
+                            ">
+
+                                <p style="
+                                    margin:0;
+                                    font-size:12px;
+                                    color:#A0A8A5;
+                                ">
+                                    SEE IT · REPORT IT · CREATE CHANGE
+                                </p>
+
+                                <p style="
+                                    margin:15px 0 0;
+                                    font-size:11px;
+                                    color:#66716D;
+                                    line-height:1.7;
+                                ">
+                                    This is an automated security email.
+                                    Please do not reply.
+                                </p>
+
+                                <p style="
+                                    margin:12px 0 0;
+                                    font-size:11px;
+                                    color:#66716D;
+                                ">
+                                    © ${new Date().getFullYear()} CIVIX
+                                </p>
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+
+    </body>
+    </html>
+    `;
+
+    const text = `
+CIVIX — THE CITY THAT LISTENS
+
+Verify your identity.
+
+Your CIVIX verification code is:
+
+${otp}
+
+EXPIRY:
+This OTP is valid for ${expiryMinutes} minutes from the time it was generated.
+
+SECURITY:
+- Never share this code with anyone.
+- CIVIX will never ask you to disclose your OTP.
+- If you did not request this code, ignore this email.
+
+— Team CIVIX
+
+SEE IT · REPORT IT · CREATE CHANGE
+`;
+
+    const info = await transporter.sendMail({
+        from: `"CIVIX — The City That Listens" <${process.env.EMAIL_USER}>`,
         to: email,
-        subject: "Your Security Code",
-        html: `
-            <div style="font-family: sans-serif; max-width: 400px; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
-                <h2 style="color: #111; margin-bottom: 8px;">Verify your identity</h2>
-                <p style="color: #666; font-size: 14px;">Use the code below to reset your password. This code expires in 5 minutes.</p>
-                <div style="background: #fdf2f8; padding: 16px; text-align: center; border-radius: 8px; margin-top: 20px;">
-                    <span style="font-size: 32px; font-weight: bold; color: #db2777; letter-spacing: 4px;">${otp}</span>
-                </div>
-            </div>`
+        subject: `${otp} is your CIVIX verification code`,
+        text,
+        html
     });
+
+    return info;
 };
 
 export const RequestPasswordResetOTP = async (req, res) => {
@@ -109,9 +415,9 @@ export const VerifyOTPAndUpdatePassword = async (req, res) => {
         }
 
         // Search for the valid OTP record
-        const otpRecord = await OtpDB.findOne({ 
-            userId, 
-            otp: otp.toString().trim() 
+        const otpRecord = await OtpDB.findOne({
+            userId,
+            otp: otp.toString().trim()
         });
 
         if (!otpRecord) {
@@ -170,7 +476,6 @@ export const DeleteAccount = async (req, res) => {
 export const ForgotPasswordRequest = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log("Forgot Password Request Received for Email:", email);
 
         if (!email) {
             return res.status(400).json({ success: false, message: "Email is required." });
@@ -184,9 +489,9 @@ export const ForgotPasswordRequest = async (req, res) => {
         // SECURITY STANDARD: Return generic success message even if user doesn't exist
         // to prevent user enumeration attacks.
         if (!user) {
-            return res.status(200).json({ 
-                success: true, 
-                message: "If an account with that email exists, a password reset code has been sent." 
+            return res.status(200).json({
+                success: true,
+                message: "If an account with that email exists, a password reset code has been sent."
             });
         }
 
@@ -196,10 +501,10 @@ export const ForgotPasswordRequest = async (req, res) => {
         // 3. Upsert OTP record tied to user's ID and email (resets TTL timer)
         await OtpDB.findOneAndUpdate(
             { userId: user._id },
-            { 
-                otp, 
-                email: user.email, 
-                createdAt: new Date() 
+            {
+                otp,
+                email: user.email,
+                createdAt: new Date()
             },
             { upsert: true, new: true }
         );
@@ -207,9 +512,9 @@ export const ForgotPasswordRequest = async (req, res) => {
         // 4. Dispatch email asynchronously or via helper
         await sendOtpEmail(user.email, otp);
 
-        return res.status(200).json({ 
-            success: true, 
-            message: "If an account with that email exists, a password reset code has been sent." 
+        return res.status(200).json({
+            success: true,
+            message: "If an account with that email exists, a password reset code has been sent."
         });
 
     } catch (error) {
@@ -239,9 +544,9 @@ export const ForgotPasswordVerifyAndReset = async (req, res) => {
         }
 
         // 2. Validate OTP record
-        const otpRecord = await OtpDB.findOne({ 
-            userId: user._id, 
-            otp: otp.toString().trim() 
+        const otpRecord = await OtpDB.findOne({
+            userId: user._id,
+            otp: otp.toString().trim()
         });
 
         if (!otpRecord) {
@@ -259,9 +564,9 @@ export const ForgotPasswordVerifyAndReset = async (req, res) => {
         // 5. Invalidate/Delete OTP immediately after single use
         await OtpDB.deleteOne({ _id: otpRecord._id });
 
-        return res.status(200).json({ 
-            success: true, 
-            message: "Password reset successful. You can now log in with your new password." 
+        return res.status(200).json({
+            success: true,
+            message: "Password reset successful. You can now log in with your new password."
         });
 
     } catch (error) {
