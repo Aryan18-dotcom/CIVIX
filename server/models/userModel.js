@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     userType: { type: String, enum: ['user', 'admin'], default: 'user' },
     profilePicture: { type: String, default: '' },
+    displayName: { type: String, default: '' },
+    isBlock: { type: Boolean, default: false }, // New field to indicate if the user is blocked
 }, { timestamps: true });
 
 // FIXED: Removed 'next' and used standard async/await flow

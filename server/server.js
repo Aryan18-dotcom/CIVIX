@@ -6,8 +6,13 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import AuthRouter from './routes/AuthRouter.js';
 import ManageAccountRouter from './routes/ManageAccountRoutes.js';
+import DashboardRouter from './routes/DashboardRouter.js';
+import ReportRouter from './routes/ReportRouter.js';
+import CarbonRouter from './routes/CarbonRouter.js';
+import LeaderboardRouter from './routes/LeaderboardRouter.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import AdminRouter from './routes/AdminRouter.js';
 
 dotenv.config();
 
@@ -83,13 +88,27 @@ app.get('/health', (req, res) => {
     res.status(200).json({ 
         status: 'OK',
         time: new Date().toISOString(),
-        messge: 'Server is healthy and running smoothly.'
+        message: 'Server is healthy and running smoothly.'
     });
 });
 
 // 6. Services Routes
 app.use('/api/auth', AuthRouter);
 app.use('/api/manage-account', ManageAccountRouter);
+// CIVIX Dashboard APIs
+app.use('/api/dashboard', DashboardRouter);
+
+// Civic Reports
+app.use('/api/reports', ReportRouter);
+
+// Carbon Credits
+app.use('/api/carbon-credits', CarbonRouter);
+
+// Leaderboard
+app.use('/api/leaderboard', LeaderboardRouter);
+
+// Admin Routes
+app.use('/api/admin', AdminRouter);
 
 
 if (process.env.NODE_ENV !== 'production') {

@@ -5,7 +5,7 @@ import OtpDB from "../models/passwordResetOTPModel.js";
 
 export const UpdateUserProfile = async (req, res) => {
     try {
-        const { username, email } = req.body;
+        const { displayName } = req.body;
         const userId = req.session.userId;
 
         if (!req.session.isLoggedIn || !userId) {
@@ -15,23 +15,10 @@ export const UpdateUserProfile = async (req, res) => {
         const user = await UserDB.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Check uniqueness conflict
-        const conflict = await UserDB.findOne({
-            _id: { $ne: userId },
-            $or: [{ email: email.toLowerCase() }, { username }]
-        });
-
-        if (conflict) {
-            return res.status(400).json({ 
-                message: conflict.email === email.toLowerCase() ? "Email already taken" : "Username already taken" 
-            });
-        }
-
-        user.username = username || user.username;
-        user.email = email.toLowerCase() || user.email;
+        user.displayName = displayName || user.displayName;
 
         await user.save();
-        return res.status(200).json({ message: "Profile updated!", user: { username: user.username, email: user.email } });
+        return res.status(200).json({ message: "Profile updated!", user: { displayName: user.displayName } });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }

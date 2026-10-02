@@ -1090,6 +1090,7 @@
         };
 
         const DASHBOARD_URL = "/dashboard.html";
+        const ADMIN_DASHBOARD_URL = "/adminDashboard.html";
 
         async function checkExistingSession() {
             try {
@@ -1105,9 +1106,13 @@
                 );
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.user || data.success === true) {
+                    if(data.user || data.success === true ) {
+                        if(data.isAdmin){
+                            window.location.assign(ADMIN_DASHBOARD_URL);
+                        } else {
                         // Session is valid, redirect away from auth page
-                        window.location.assign(DASHBOARD_URL);
+                            window.location.assign(DASHBOARD_URL);
+                        }
                     }
                 }
             } catch (error) {
@@ -1311,9 +1316,14 @@
                     password: document.getElementById("loginPassword").value
                 });
 
-                window.location.assign(
-                    data.redirect_url || DASHBOARD_URL
-                );
+                if(data.user || data.success === true ) {
+                    if(data.isAdmin){
+                        window.location.assign(ADMIN_DASHBOARD_URL);
+                    } else {
+                        // Session is valid, redirect away from auth page
+                        window.location.assign(DASHBOARD_URL);
+                    }
+                }
 
             } catch (error) {
                 showMessage("loginMessage", error.message);

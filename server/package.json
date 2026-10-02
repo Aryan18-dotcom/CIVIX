@@ -1,24 +1,31 @@
 {
-  "name": "civix-backend",
+  "name": "new_server",
   "version": "1.0.0",
-  "description": "civix-backend",
-  "license": "ISC",
-  "author": "Aryan-Chheda",
-  "type": "module",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
+    "seed": "node seed.js",
+    "seed:reset": "node seed.js --reset",
+    "seed:clear": "node seed.js --clear",
     "start": "node server.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.11.0",
     "connect-mongo": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "mongoose": "^9.10.3",
+    "multer": "^2.4.0",
     "nodemailer": "^10.0.13",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "streamifier": "^0.1.1"
   }
 }
